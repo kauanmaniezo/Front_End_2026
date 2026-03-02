@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Material de Estudo Digital - Arquitetura e Lógica de Programação</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #764ba2;
+            font-size: 32px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 30px;
+            border-left: 6px solid #764ba2;
+            padding-left: 10px;
+        }
+
+        h3 {
+            color: #444;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        img {
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #764ba2;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+        tr:hover {
+            background-color: #e0e0ff;
+            transition: 0.3s;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            color: white;
+            background: #667eea;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        form {
+            background: #f9f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 8px rgba(102,126,234,0.5);
+        }
+
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Material de Estudo Digital</h1>
+        <h2>Arquitetura e Lógica de Programação</h2>
+
+        <p>
+            Este material tem como objetivo explicar os principais conceitos da disciplina 
+            de <strong>Arquitetura e Lógica de Programação</strong>, fundamentais para 
+            a formação de qualquer desenvolvedor.
+        </p>
+
+        <hr>
+
+        <h2>1. Arquitetura de Computadores</h2>
+
+        <p>
+            A Arquitetura de Computadores estuda a organização e funcionamento dos componentes 
+            internos de um computador.
+        </p>
+
+        <h3>Principais Componentes:</h3>
+        <ul>
+            <li><strong>CPU</strong> – Processamento das instruções.</li>
+            <li><strong>Memória RAM</strong> – Armazenamento temporário.</li>
+            <li><strong>HD/SSD</strong> – Armazenamento permanente.</li>
+            <li><strong>Placa-mãe</strong> – Interligação dos componentes.</li>
+        </ul>
+
+        <h3>Modelo de Von Neumann</h3>
+        <p>
+            Dados e instruções compartilham a mesma memória.
+        </p>
+
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Von_Neumann_Architecture.svg" 
+             alt="Arquitetura de Von Neumann">
+
+        <hr>
+
+        <h2>2. Lógica de Programação</h2>
+
+        <p>
+            Base para o desenvolvimento de algoritmos e programas.
+        </p>
+
+        <h3>Conceitos Importantes:</h3>
+        <ol>
+            <li>Algoritmo</li>
+            <li>Variáveis</li>
+            <li>Estruturas Condicionais</li>
+            <li>Estruturas de Repetição</li>
+            <li>Funções</li>
+        </ol>
+
+        <hr>
+
+        <h2>3. Tabela Comparativa</h2>
+
+        <table border="0">
+            <tr>
+                <th>Conceito</th>
+                <th>Definição</th>
+            </tr>
+            <tr>
+                <td>Algoritmo</td>
+                <td>Sequência lógica para resolver problema</td>
+            </tr>
+            <tr>
+                <td>Variável</td>
+                <td>Espaço para armazenar dados</td>
+            </tr>
+            <tr>
+                <td>Loop</td>
+                <td>Repetição de comandos</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h2>4. Material Complementar</h2>
+
+        <a href="https://www.w3schools.com" target="_blank">
+            Acessar Site de Apoio
+        </a>
+
+        <hr>
+
+        <h2>Formulário de Avaliação</h2>
+
+        <form>
+            <label>Nome:</label>
+            <input type="text" name="nome">
+
+            <label>Você compreendeu o conteúdo?</label><br>
+            <input type="radio" name="compreendeu"> Sim
+            <input type="radio" name="compreendeu"> Parcialmente
+            <input type="radio" name="compreendeu"> Não
+            <br><br>
+
+            <label>Qual tema achou mais interessante?</label>
+            <select>
+                <option>Arquitetura de Computadores</option>
+                <option>Lógica de Programação</option>
+            </select>
+
+            <label>Comentário:</label>
+            <textarea rows="4"></textarea>
+
+            <input type="submit" value="Enviar Avaliação">
+        </form>
+
+        <div class="footer">
+            Obrigado por acessar o material!
+        </div>
+
+    </div>
+
+</body>
+</html>
