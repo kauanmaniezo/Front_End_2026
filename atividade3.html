@@ -6,11 +6,245 @@
     	<meta name="author" content="Portal Computação">
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     	<title>Arquivo Confuso da Computação</title>
-    
-        <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    
+<style>
 
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+/* BODY */
+body{
+font-family: Arial, Helvetica, sans-serif;
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:#333;
+line-height:1.6;
+}
+
+/* CONTAINER */
+#pagina{
+width:90%;
+max-width:1200px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* HEADER */
+header{
+text-align:center;
+margin-bottom:30px;
+padding:20px;
+background:linear-gradient(90deg,#4facfe,#00f2fe);
+color:white;
+border-radius:10px;
+}
+
+header h1{
+margin-bottom:10px;
+}
+
+/* MENU */
+nav{
+background:#222;
+margin:20px 0;
+border-radius:8px;
+}
+
+nav ul{
+list-style:none;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+nav ul li{
+margin:10px;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+padding:10px 15px;
+border-radius:6px;
+transition:0.3s;
+}
+
+nav a:hover{
+background:#00c6ff;
+}
+
+/* SECTIONS */
+section{
+margin:40px 0;
+padding:20px;
+background:#f9f9f9;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+section h2{
+margin-bottom:15px;
+color:#005f99;
+border-bottom:2px solid #00c6ff;
+padding-bottom:5px;
+}
+
+/* ARTICLES */
+article{
+margin-bottom:20px;
+padding:15px;
+background:white;
+border-left:5px solid #00c6ff;
+border-radius:6px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* ASIDE */
+aside{
+background:#e8f6ff;
+padding:15px;
+margin-top:15px;
+border-radius:6px;
+}
+
+/* LISTAS */
+ul,ol{
+margin-left:20px;
+margin-top:10px;
+}
+
+/* CODE */
+code{
+background:#222;
+color:#0f0;
+padding:4px 6px;
+border-radius:4px;
+}
+
+/* PRE */
+pre{
+background:#111;
+color:#0f0;
+padding:10px;
+border-radius:6px;
+overflow:auto;
+margin:10px 0;
+}
+
+/* DETAILS */
+details{
+margin-top:10px;
+cursor:pointer;
+}
+
+/* BLOCKQUOTE */
+blockquote{
+margin:15px 0;
+padding:10px;
+background:#f1f1f1;
+border-left:5px solid #00c6ff;
+font-style:italic;
+}
+
+/* TABELAS */
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+table th{
+background:#0077cc;
+color:white;
+padding:10px;
+}
+
+table td{
+padding:10px;
+text-align:center;
+border:1px solid #ccc;
+}
+
+table tr:nth-child(even){
+background:#f2f2f2;
+}
+
+table tr:hover{
+background:#d9f1ff;
+}
+
+/* FORMULÁRIOS */
+form{
+margin-top:15px;
+}
+
+fieldset{
+border:2px solid #00c6ff;
+padding:15px;
+border-radius:8px;
+background:#f8fbff;
+}
+
+legend{
+font-weight:bold;
+color:#0077cc;
+}
+
+label{
+display:block;
+margin-top:10px;
+font-weight:bold;
+}
+
+input,select,textarea{
+width:100%;
+padding:8px;
+margin-top:5px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+textarea{
+height:80px;
+}
+
+input[type=submit]{
+margin-top:15px;
+background:linear-gradient(90deg,#00c6ff,#0072ff);
+color:white;
+border:none;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+input[type=submit]:hover{
+transform:scale(1.05);
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* FOOTER */
+footer{
+margin-top:40px;
+padding:20px;
+text-align:center;
+background:#111;
+color:white;
+border-radius:10px;
+}
+
+footer address{
+margin-top:5px;
+font-style:normal;
+color:#ccc;
+}
+
+</style>
 </head>
 <body>
 
