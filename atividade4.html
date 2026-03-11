@@ -1,204 +1,345 @@
 <!DOCTYPE html>
-<html lang="pt-br" data-theme="dark">
+<html lang="pt-br" data-theme="cupcake">
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="Curiosidades e fatos históricos da Ciência da Computação">
     <meta name="author" content="Portal Computação">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arquivo Confuso da Computação</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    <style>
-        section { scroll-margin-top: 5rem; }
-        .card { transition: transform 0.2s ease; }
-        .card:hover { transform: translateY(-4px); }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet"> 
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-base-200 min-h-screen">
 
-<body class="bg-base-300 text-base-content font-sans antialiased">
+<div id="pagina" class="max-w-5xl mx-auto px-4 py-8">
 
-<div id="pagina" class="max-w-6xl mx-auto px-4">
-
-    <header class="hero bg-primary text-primary-content rounded-3xl my-8 shadow-2xl p-10 text-center">
-        <div class="hero-content flex-col">
-            <h1 class="text-5xl font-black uppercase tracking-tighter">Arquivo (Quase) Perdido</h1>
-            <p class="text-xl opacity-90 max-w-lg">Uma coletânea caótica de fatos históricos, curiosos e inesperados da Ciência da Computação.</p>
+    <header id="topo" class="hero bg-primary text-primary-content rounded-box shadow-xl mb-8 p-10">
+        <div class="hero-content text-center">
+            <div class="max-w-md">
+                <h1 class="text-4xl font-bold italic">Arquivo (Quase) Perdido da Ciência da Computação</h1>
+                <p class="py-4 opacity-90">Uma coletânea caótica de fatos históricos, curiosos e inesperados.</p>
+            </div>
         </div>
     </header>
 
-    <nav class="sticky top-4 z-50 mb-12">
-        <div class="navbar bg-base-100/80 backdrop-blur shadow-lg rounded-2xl border border-white/5 overflow-x-auto justify-center">
-            <ul class="menu menu-horizontal px-1 font-bold gap-2">
-                <li><a href="#pioneiros">Pioneiros</a></li>
-                <li><a href="#bugs">Bugs</a></li>
-                <li><a href="#internet">Internet</a></li>
-                <li><a href="#linguagens">Linguagens</a></li>
-                <li><a href="#nomes">Nomes</a></li>
-                <li><a href="#acidentes">Acidentes</a></li>
-                <li><a href="#easter-eggs">Easter Eggs</a></li>
-                <li><a href="#formulario">Enviar</a></li>
-            </ul>
-        </div>
+    <nav id="menu-principal" class="navbar bg-base-100 shadow-md rounded-box sticky top-2 z-50 mb-8 overflow-x-auto">
+        <ul class="menu menu-horizontal w-full justify-around font-semibold whitespace-nowrap">
+            <li><a href="#pioneiros" class="hover:text-primary">Pioneiros</a></li>
+            <li><a href="#bugs" class="hover:text-primary">Bugs</a></li>
+            <li><a href="#internet" class="hover:text-primary">Internet</a></li>
+            <li><a href="#linguagens" class="hover:text-primary">Linguagens</a></li>
+            <li><a href="#linha-do-tempo" class="hover:text-primary">Linha do Tempo</a></li>
+            <li><a href="#formulario" class="hover:text-primary">Envie Algo</a></li>
+        </ul>
     </nav>
 
-    <main class="space-y-20">
+    <main class="space-y-12">
 
-        <section id="pioneiros">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-4xl font-bold italic"># Pioneiros Esquecidos</h2>
-                <div class="h-1 flex-grow bg-secondary rounded-full opacity-20"></div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6">
-                <article class="card bg-base-100 shadow-xl border border-base-content/5">
-                    <div class="card-body">
-                        <h3 class="card-title text-secondary">Ada Lovelace</h3>
-                        <p>Considerada a primeira programadora da história.</p>
-                        <details class="collapse collapse-plus bg-base-200 mt-4">
-                            <summary class="collapse-title font-medium">Ver mais detalhes</summary>
-                            <div class="collapse-content text-sm">
-                                <p>Ela escreveu um algoritmo para a Máquina Analítica no século XIX, prevendo que computadores poderiam fazer mais do que simples cálculos.</p>
-                            </div>
-                        </details>
-                    </div>
-                </article>
-
-                <article class="card bg-base-100 shadow-xl border border-base-content/5">
-                    <div class="card-body">
-                        <h3 class="card-title text-secondary">Alan Turing</h3>
-                        <p>Criador do conceito de Máquina de Turing e pai da IA.</p>
-                        <blockquote class="border-l-4 border-accent pl-4 italic text-sm my-2">
-                            "Podemos ver apenas um pouco do futuro, mas o suficiente para perceber que há muito a fazer."
-                        </blockquote>
-                        <div class="badge badge-outline">Enigma</div>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <section id="bugs" class="bg-base-200 p-8 rounded-3xl">
-            <h2 class="text-3xl font-bold mb-8 flex items-center gap-2">
-                <span class="text-error">👾</span> Histórias de Bugs
-            </h2>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="space-y-6">
-                    <article>
-                        <h3 class="text-xl font-bold mb-2">O Primeiro Bug Real (1947)</h3>
-                        <p class="opacity-80">Uma mariposa encontrada dentro de um computador Mark II.</p>
-                        <div class="mockup-code mt-4 text-xs">
-                            <pre data-prefix=">"><code>Bug detectado: Mariposa</code></pre>
-                            <pre data-prefix=">"><code>Status: Colada no relatório</code></pre>
+        <section id="pioneiros" class="card bg-base-100 shadow-xl p-6">
+            <h2 class="text-3xl font-black mb-6 border-b-4 border-secondary w-fit">Pioneiros Esquecidos</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <article class="bg-base-200 p-4 rounded-lg">
+                    <h3 class="text-xl font-bold text-secondary">Ada Lovelace</h3>
+                    <p class="mb-2">Considerada a primeira programadora da história.</p>
+                    <details class="collapse collapse-arrow bg-base-100 border border-base-300">
+                        <summary class="collapse-title font-medium">Ver mais</summary>
+                        <div class="collapse-content">
+                            <p>Ela escreveu um algoritmo para a Máquina Analítica no século XIX.</p>
                         </div>
-                    </article>
+                    </details>
+                </article>
 
-                    <article>
-                        <h3 class="text-xl font-bold mb-2">O Vírus Creeper</h3>
-                        <p class="opacity-80">Primeiro vírus da história (1971).</p>
-                        <pre class="bg-neutral text-success p-4 rounded-lg font-mono mt-2">I'M THE CREEPER : CATCH ME IF YOU CAN</pre>
-                    </article>
-                </div>
+                <article class="bg-base-200 p-4 rounded-lg">
+                    <h3 class="text-xl font-bold text-secondary">Alan Turing</h3>
+                    <p>Criador do conceito de Máquina de Turing.</p>
+                    <blockquote class="italic border-l-4 border-primary pl-4 mt-2 py-1 bg-white/50">
+                        "Podemos ver apenas um pouco do futuro, mas o suficiente para perceber que há muito a fazer."
+                    </blockquote>
+                </article>
+            </div>
 
-                <div class="alert shadow-lg bg-base-100 border-l-8 border-error">
-                    <div>
-                        <h3 class="font-bold">Custo da Falha</h3>
-                        <div class="text-xs">O foguete Ariane 5 explodiu por erro de conversão de bits. Prejuízo: $370 milhões.</div>
-                    </div>
+            <aside class="alert alert-info mt-6 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div>
+                    <h4 class="font-bold">Curiosidade lateral</h4>
+                    <p class="text-sm">Durante décadas, o trabalho de Turing foi mantido em segredo.</p>
                 </div>
+            </aside>
+        </section>
+
+        <section id="bugs" class="card bg-neutral text-neutral-content shadow-xl p-6">
+            <h2 class="text-3xl font-black mb-6 border-b-4 border-accent w-fit">Histórias de Bugs</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <article class="card bg-base-100 text-base-content p-4 shadow-inner">
+                    <h3 class="text-xl font-bold">O Primeiro Bug Real</h3>
+                    <p>Uma mariposa encontrada em um computador em 1947.</p>
+                    <figure class="mt-2 p-2 bg-base-300 rounded">
+                        <figcaption class="text-xs font-mono uppercase">Registro do bug colado no relatório técnico.</figcaption>
+                    </figure>
+                </article>
+
+                <article class="card bg-base-100 text-base-content p-4 shadow-inner">
+                    <h3 class="text-xl font-bold">O Vírus Creeper</h3>
+                    <p>Primeiro vírus da história (1971).</p>
+                    <p class="mt-2">Mensagem exibida:</p>
+                    <pre class="mockup-code bg-black text-green-500 mt-2">
+<code>I'M THE CREEPER : CATCH ME IF YOU CAN</code>
+                    </pre>
+                </article>
             </div>
         </section>
 
-        <section id="linguagens">
-            <h2 class="text-3xl font-bold mb-8">Linguagens & Dados</h2>
-            <div class="overflow-x-auto shadow-2xl rounded-2xl">
-                <table class="table table-zebra w-full bg-base-100">
-                    <thead class="bg-neutral text-neutral-content">
+        <section id="internet" class="card bg-base-100 shadow-xl p-6">
+            <h2 class="text-3xl font-black mb-6">Curiosidades da Internet</h2>
+            <div class="join join-vertical w-full">
+                <article class="join-item border border-base-300 p-4">
+                    <h3 class="font-bold text-lg">Primeiro Website</h3>
+                    <p>Criado em 1991 por Tim Berners-Lee.</p>
+                </article>
+                <article class="join-item border border-base-300 p-4">
+                    <h3 class="font-bold text-lg text-primary">ARPANET</h3>
+                    <p>A precursora da internet moderna.</p>
+                    <ul class="list-disc list-inside mt-2 text-sm">
+                        <li>Primeira mensagem enviada: "LO"</li>
+                        <li>O sistema caiu antes de completar "LOGIN"</li>
+                    </ul>
+                </article>
+                <article class="join-item border border-base-300 p-4">
+                    <h3 class="font-bold text-lg">Emojis e ASCII</h3>
+                    <p>Antes dos emojis gráficos, usávamos:</p>
+                    <div class="flex gap-2 mt-2">
+                        <code class="badge badge-outline">:-)</code>
+                        <code class="badge badge-outline">;-)</code>
+                        <code class="badge badge-outline">:-D</code>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="linguagens" class="card bg-base-100 shadow-xl p-6">
+            <h2 class="text-3xl font-black mb-6">Linguagens de Programação</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <article class="stat bg-base-200 rounded-box">
+                    <div class="stat-title">COBOL</div>
+                    <div class="stat-desc">Ainda usado em sistemas bancários.</div>
+                </article>
+                <article class="stat bg-base-200 rounded-box">
+                    <div class="stat-title">C</div>
+                    <div class="stat-desc">Base para sistemas operacionais.</div>
+                </article>
+                <article class="stat bg-base-200 rounded-box">
+                    <div class="stat-title">HTML</div>
+                    <div class="stat-desc italic">"Não é linguagem de programação"</div>
+                </article>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="table table-zebra w-full bg-base-100 shadow">
+                    <caption class="text-lg font-bold p-4">Linguagens e Ano de Criação</caption>
+                    <thead class="bg-primary text-primary-content">
                         <tr>
                             <th>Linguagem</th>
-                            <th>Ano de Criação</th>
-                            <th>Nível de Caos</th>
+                            <th>Ano</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>COBOL</td>
-                            <td>1959</td>
-                            <td><div class="badge badge-warning">Bancos em pânico</div></td>
-                        </tr>
-                        <tr>
-                            <td>C</td>
-                            <td>1972</td>
-                            <td><div class="badge badge-info">Puro Hardware</div></td>
-                        </tr>
-                        <tr>
-                            <td>Python</td>
-                            <td>1991</td>
-                            <td><div class="badge badge-success">Gentil</div></td>
-                        </tr>
+                        <tr><td>COBOL</td><td>1959</td></tr>
+                        <tr><td>C</td><td>1972</td></tr>
+                        <tr><td>Python</td><td>1991</td></tr>
                     </tbody>
+                    <tfoot class="bg-base-300">
+                        <tr><td colspan="2" class="text-center italic">Dados históricos aproximados</td></tr>
+                    </tfoot>
                 </table>
             </div>
         </section>
 
-        <section id="easter-eggs" class="grid md:grid-cols-3 gap-4">
-             <div class="card bg-accent text-accent-content col-span-full p-6 mb-4">
-                <h2 class="text-2xl font-black uppercase">Easter Eggs e Comandos Secretos</h2>
-             </div>
-             
-             <div class="card bg-base-100 shadow-md">
-                 <div class="card-body">
-                     <h3 class="card-title text-sm uppercase opacity-60">Konami Code</h3>
-                     <p class="font-mono text-xl">↑ ↑ ↓ ↓ ← → ← → B A</p>
-                 </div>
-             </div>
+        <section id="linha-do-tempo" class="card bg-base-100 shadow-xl p-6">
+            <h2 class="text-3xl font-black mb-6">Linha do Tempo Aleatória</h2>
+            <ul class="timeline timeline-vertical">
+                <li><div class="timeline-start">1837</div><div class="timeline-middle text-primary">●</div><div class="timeline-end timeline-box">Máquina Analítica</div><hr/></li>
+                <li><hr/><div class="timeline-start">1946</div><div class="timeline-middle text-primary">●</div><div class="timeline-end timeline-box">ENIAC</div><hr/></li>
+                <li><hr/><div class="timeline-start">1969</div><div class="timeline-middle text-primary">●</div><div class="timeline-end timeline-box">ARPANET</div><hr/></li>
+                <li><hr/><div class="timeline-start">1991</div><div class="timeline-middle text-primary">●</div><div class="timeline-end timeline-box">Primeiro site</div><hr/></li>
+                <li><hr/><div class="timeline-start">2007</div><div class="timeline-middle text-primary">●</div><div class="timeline-end timeline-box">Popularização dos smartphones</div></li>
+            </ul>
+        </section>
 
-             <div class="card bg-base-100 shadow-md">
-                <div class="card-body">
-                    <h3 class="card-title text-sm uppercase opacity-60">Sudo Me</h3>
-                    <code>$ sudo make me a sandwich</code>
-                </div>
-            </div>
+        <header class="divider divider-primary py-10">
+            <h1 class="text-2xl font-bold bg-base-100 px-4">Fatos Inúteis (Mas Incríveis)</h1>
+        </header>
 
-            <div class="card bg-base-100 shadow-md">
+        <section id="nomes" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <article class="card bg-primary text-primary-content shadow-xl hover:scale-105 transition-transform">
                 <div class="card-body">
-                    <h3 class="card-title text-sm uppercase opacity-60">Excel 97</h3>
-                    <p>Continha um simulador de vôo secreto.</p>
+                    <h3 class="card-title">Spam vem de um presunto</h3>
+                    <p class="text-sm">O termo vem do <strong>Monty Python</strong> onde repetiam SPAM (presunto enlatado) sem parar.</p>
                 </div>
+            </article>
+
+            <article class="card bg-secondary text-secondary-content shadow-xl hover:scale-105 transition-transform">
+                <div class="card-body">
+                    <h3 class="card-title">Bluetooth Viking</h3>
+                    <p class="text-sm">Homenagem ao rei <em>Harald "Bluetooth" Gormsson</em>, que unificou a Dinamarca.</p>
+                </div>
+            </article>
+
+            <article class="card bg-accent text-accent-content shadow-xl hover:scale-105 transition-transform">
+                <div class="card-body">
+                    <h3 class="card-title">Bug é literal</h3>
+                    <p class="text-sm">O inseto no <abbr title="Harvard Mark II">Mark II</abbr> era uma mariposa real.</p>
+                    <details class="text-xs mt-2 cursor-pointer opacity-80"><summary>Detalhe inútil</summary>O inseto ainda está num museu.</details>
+                </div>
+            </article>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section id="acidentes" class="card bg-base-100 shadow-xl p-6 border-l-8 border-error">
+                <h2 class="text-2xl font-bold mb-4">Acidentes Tecnológicos</h2>
+                <div class="space-y-4">
+                    <article>
+                        <h3 class="font-bold">O primeiro domínio</h3>
+                        <p class="text-sm"><code>symbolics.com</code> (1985).</p>
+                    </article>
+                    <article class="bg-error/10 p-3 rounded">
+                        <h3 class="font-bold">Guerra Nuclear Quase Real</h3>
+                        <p class="text-sm">Em 1983, Stanislav Petrov ignorou um alarme falso de mísseis.</p>
+                        <blockquote class="italic text-xs mt-1">"Um bug pode ter salvo o mundo."</blockquote>
+                    </article>
+                </div>
+            </section>
+
+            <section id="dinheiro" class="card bg-base-100 shadow-xl p-6 border-l-8 border-warning">
+                <h2 class="text-2xl font-bold mb-4">Erros Caríssimos</h2>
+                <div class="space-y-4">
+                    <article>
+                        <h3 class="font-bold">O traço da NASA</h3>
+                        <p class="text-sm">Mariner 1 (1962) perdida por falta de um hífen na fórmula.</p>
+                    </article>
+                    <article class="bg-warning/20 p-3 rounded">
+                        <h3 class="font-bold text-warning-content">Bitcoin no Lixo</h3>
+                        <p class="text-sm">8.000 bitcoins descartados num HD no Reino Unido.</p>
+                        <pre class="text-xs font-mono bg-black text-white p-2 mt-2">Valor atual: melhor não calcular.</pre>
+                    </article>
+                </div>
+            </section>
+        </div>
+
+        <section id="easter-eggs" class="card bg-base-100 shadow-2xl p-8 border-4 border-dashed border-primary">
+            <h2 class="text-3xl font-black text-center mb-8 italic">Easter Eggs Reais e Oficiais 🥚</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <article class="p-4 bg-base-200 rounded-xl">
+                    <h3 class="font-bold flex items-center gap-2"><span class="badge badge-primary">Excel 97</span> Simulador de Voo</h3>
+                    <p class="text-sm py-2">Havia um simulador 3D escondido na planilha!</p>
+                    <details class="text-xs"><summary class="link link-primary">Como ativava?</summary><p>Células específicas + combinações de teclado.</p></details>
+                </article>
+                <article class="p-4 bg-base-200 rounded-xl">
+                    <h3 class="font-bold flex items-center gap-2"><span class="badge badge-secondary">Chrome</span> T-Rex</h3>
+                    <p class="text-sm py-2">Sem internet? Aperte espaço e comece o jogo.</p>
+                </article>
             </div>
         </section>
 
-        <section id="formulario" class="max-w-2xl mx-auto">
-            <div class="card bg-neutral text-neutral-content shadow-2xl">
-                <form class="card-body">
-                    <h2 class="card-title text-2xl mb-4">Envie seu Fato Inútil</h2>
-                    <div class="form-control">
-                        <label class="label"><span class="label-text text-neutral-content">Seu Nome</span></label>
-                        <input type="text" placeholder="Ex: Ada" class="input input-bordered text-base-content" />
-                    </div>
-                    <div class="form-control mt-4">
-                        <label class="label"><span class="label-text text-neutral-content">Curiosidade</span></label>
-                        <textarea class="textarea textarea-bordered text-base-content" placeholder="Escreva aqui algo que ninguém pediu para saber..."></textarea>
-                    </div>
-                    <div class="form-control mt-6">
-                        <button class="btn btn-primary">Enviar para o Arquivo</button>
-                    </div>
-                </form>
+        <section id="bugs-absurdos" class="card bg-error text-error-content p-6 shadow-xl">
+            <h2 class="text-3xl font-black mb-6">Bugs Absurdos da História</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <article class="bg-white/10 p-4 rounded-box">
+                    <h3 class="font-bold underline decoration-2">Ariane 5 (1996)</h3>
+                    <p class="text-sm">Explodiu em 37s por erro de conversão de 64 bits para 16 bits.</p>
+                    <blockquote class="text-xs font-mono mt-2">Custo: 370 milhões USD.</blockquote>
+                </article>
+                <article class="bg-white/10 p-4 rounded-box">
+                    <h3 class="font-bold underline decoration-2">Y2K (Bug do Milênio)</h3>
+                    <p class="text-sm">Gastou-se bilhões com o medo do "00" ser interpretado como 1900.</p>
+                </article>
             </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section class="card bg-base-100 shadow-xl overflow-hidden">
+                <div class="card-body p-0">
+                    <table class="table table-md">
+                        <thead class="bg-neutral text-neutral-content">
+                            <tr><th>Evento</th><th>Nível de Caos</th><th>Custo</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Ariane 5</td><td>Explosivo</td><td>370M USD</td></tr>
+                            <tr><td>Bug Pentium</td><td>Matemático</td><td>475M USD</td></tr>
+                            <tr><td>Y2K</td><td>Psicológico</td><td>Bilhões USD</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="form" class="card bg-base-100 shadow-xl border-t-4 border-accent">
+                <div class="card-body">
+                    <h2 class="card-title">Envie um Fato Inútil</h2>
+                    <form class="space-y-3">
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">Nome:</span></label>
+                            <input type="text" name="nome" class="input input-bordered input-sm">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">Fato:</span></label>
+                            <input type="text" name="fato" class="input input-bordered input-sm">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">Grau (0-10):</span></label>
+                            <input type="range" min="0" max="10" value="5" class="range range-accent range-xs">
+                        </div>
+                        <input type="submit" value="Enviar inutilidade" class="btn btn-accent btn-sm btn-block">
+                    </form>
+                </div>
+            </section>
+        </div>
+
+        <section id="formulario" class="card bg-base-100 shadow-2xl p-8 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold mb-6 text-center text-primary">Envie sua Curiosidade Profissional</h2>
+            <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control col-span-1">
+                    <label class="label"><span class="label-text">Nome:</span></label>
+                    <input type="text" name="nome" class="input input-bordered">
+                </div>
+                <div class="form-control col-span-1">
+                    <label class="label"><span class="label-text">Email:</span></label>
+                    <input type="email" name="email" class="input input-bordered">
+                </div>
+                <div class="form-control col-span-1">
+                    <label class="label"><span class="label-text">Categoria:</span></label>
+                    <select name="categoria" class="select select-bordered">
+                        <option>Pioneiros</option><option>Bugs</option><option>Internet</option><option>Linguagens</option>
+                    </select>
+                </div>
+                <div class="form-control col-span-1">
+                    <label class="label"><span class="label-text">Data do fato:</span></label>
+                    <input type="date" name="data" class="input input-bordered">
+                </div>
+                <div class="form-control col-span-2">
+                    <label class="label"><span class="label-text">Sua curiosidade:</span></label>
+                    <textarea name="curiosidade" class="textarea textarea-bordered h-24"></textarea>
+                </div>
+                <input type="submit" value="Enviar Dados" class="btn btn-primary col-span-2">
+            </form>
         </section>
 
     </main>
 
-    <footer class="footer footer-center p-10 bg-base-100 text-base-content rounded-t-3xl mt-20 border-t border-white/5">
+    <footer class="footer footer-center p-10 bg-base-300 text-base-content rounded-box mt-16 space-y-4">
         <div>
-            <p class="font-bold text-lg italic">Instituto Internacional de Informações Desnecessárias</p> 
-            <p>© 2026 - Arquivo Confuso da Computação</p>
-            <div class="flex gap-4 mt-2 opacity-60 text-sm">
-                <address>contato@ultrasecreto.dev</address>
-                <span>•</span>
-                <address>inutilidades@caosdigital.com</address>
-            </div>
+            <p class="font-bold">© 2026 Instituto Internacional de Informações Desnecessárias</p>
+            <address class="not-italic text-sm">Email: <a href="mailto:inutilidades@caosdigital.com" class="link">inutilidades@caosdigital.com</a></address>
+        </div>
+        <div class="divider"></div>
+        <div>
+            <p>&copy; 2026 Arquivo Confuso da Computação</p>
+            <address class="not-italic text-sm text-primary">Contato: contato@computacao.com</address>
+        </div>
+        <div class="divider"></div>
+        <div class="opacity-75">
+            <p>© 2026 Arquivo Ultra-Secreto da Computação</p>
+            <address class="not-italic text-sm">contato@ultrasecreto.dev</address>
         </div>
     </footer>
 
