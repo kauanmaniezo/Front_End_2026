@@ -1,84 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-<title> COLECIONADOR DE CARROS </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Repositórios | Front End 2026</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+        }
 
-<style>
-body{
-    background-color: #8F8F8F;
-    font-family: Arial, sans-serif;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
 
-nav ul{
-    list-style: none;
-}
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-a{
-    font-size: 35px;
-    color: #000000;
-    text-decoration: none;
-}
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
 
-h1{
-    font-size: 65px;
-    text-align: center;
-    color: #3B1111;
-    padding: 10px;
-}
+        .container {
+            max-width: 600px;
+            width: 100%;
+            display: grid;
+            gap: 15px;
+        }
 
-p{
-    font-size: 30px;
-    color: dark;
-    border-radius: 35px;
-    border: 3px solid #3B1111;
-    padding: 30px;
-    width: 60%;
-    margin: auto;
-    text-align: center;
-}
+        .repo-link {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-img{
-    width: 300px;
-    height: 180px;
-    margin: 10px;
-}
+        .repo-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
 
-.galeria{
-    text-align: center;
-}
-</style>
+        .repo-link::after {
+            content: '→';
+            font-size: 1.2em;
+        }
 
+        footer {
+            margin-top: 50px;
+            font-size: 0.9em;
+            color: #64748b;
+        }
+    </style>
 </head>
-
 <body>
 
-<nav>
-<ul>
-<li><a href="https://www.lamborghini.com/en-en#val-ht"> Superesportivos </a></li>
-<li><a href="https://www.mundodoscolecionaveis.com.br/miniaturas/auto-colletction/?srsltid=AfmBOorHdqpDxM-q3gS_5C4wTyHjMoAdyLvBA2VSrPu6L7jiQ9rQG3-N"> Minha Coleção </a></li>
-</ul>
-</nav>
+    <header>
+        <h1>Portfólio Front End 2026</h1>
+        <p>Acesse abaixo as atividades desenvolvidas no repositório.</p>
+    </header>
 
-<h1>  COLEÇÃO DE CARROS RAROS  </h1>
+    <main class="container">
+        <a href="https://kauanmaniezo.github.io/Front_End_2026/atividade1" class="repo-link">Atividade 1</a>
+        <a href="https://kauanmaniezo.github.io/Front_End_2026/atividade2" class="repo-link">Atividade 2</a>
+        <a href="https://kauanmaniezo.github.io/Front_End_2026/atividade3" class="repo-link">Atividade 3</a>
+        <a href="https://kauanmaniezo.github.io/Front_End_2026/atividade4" class="repo-link">Atividade 4</a>
+    </main>
 
-<div class="galeria">
-
-<img src="https://revistafullpower.com.br/wp-content/uploads/2023/01/7960415b-yangwang-u9-supercarro-eletrico-de-frente-da-marca-premium-da-byd-1024x628.jpg">
-<img src="https://th.bing.com/th/id/OIP.2LCt2-HjfbP3QyVapxumEwHaEK?w=283&h=180&c=7&r=0&o=7&cb=defcachec2&pid=1.7&rm=3">
-<img src="https://revistacarro.com.br/wp-content/uploads/2022/06/Bugatti-La-Voiture-Noire_3.jpg">
-
-</div>
-
-<p>
-Bem-vindo à minha coleção de carros raros e exclusivos!  
-Aqui você encontra modelos clássicos, superesportivos e veículos históricos.
-</p>
-
-<br>
-
-<p>
-Entre em contato para troca de experiências entre colecionadores.
-</p>
+    <footer>
+        <p>Desenvolvido por Kauan Maniezo</p>
+    </footer>
 
 </body>
 </html>
