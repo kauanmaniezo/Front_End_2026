@@ -1,36 +1,66 @@
-const cria = document.getElementById("b");
-const btn = document.getElementById("btn");
+const produto = {
+    "123": {"nome": "Coca-Cola Espumante", "preco": 9.99},
+    "456": {"nome": "Um mamute Pequenino", "preco": 8.99},
+    "789": {"nome": "Vampiro Doidão", "preco": 4.69}
+};
 
-const estados = {
-    normal:  "b_n.png",
-    puto: "b_p.png",
-    morto: "b_d.png",
-    comendo: "b_c.png",
-    alimentado: "b_a.png",
+let carrinho = [];
+const audio = new Audio("bip.mp3");
+
+window.onload = () => {
+    document.getElementById("cod").focus();
+};
+
+function addProduto() {
+    const codElement = document.getElementById("cod");
+    const qtdElement = document.getElementById("qtd");
+
+    const codigo = codElement.value;
+    const quantidade = Number(qtdElement.value); 
+
+    if (!produto[codigo]) {
+        alert("Item não encontrado!"); 
+        return;
+    }
+
+    const produtoBase = produto[codigo];
+    
+    const item = {
+        nome: produtoBase.nome,
+        preco: produtoBase.preco,
+        quantidade: quantidade,
+        subtotal: produtoBase.preco * quantidade
+    };
+
+    carrinho.push(item);
+    audio.currentTime = 0;
+    audio.play();
+
+    atualizarTela();
+    
+    codElement.value = "";
+    qtdElement.value = "1";
+    codElement.focus();
 }
 
-let contador = 0; 
-let intervalo = null;
-let time_click = null;
-let time_out = null;
+function atualizarTela() {
+    const lista = document.getElementById("lista"); 
+    lista.innerHTML = "";
 
-function controlador (){
-    if(intervalo) clearInterval(intervalo)
-        
-        intervalo = setInterval(() => {
-            contador++;
+    let total = 0;
 
-            console.log("tempo:",contador);
-            
-            if (contador == 30){
-                cria.src = estados.puto;
-            }
+    carrinho.forEach((item, index) => {
+        total += item.subtotal;
 
-            if(contador == 60){
-                cria.src = estados.morto;
-            }
-        }, 1000);
+        const li = document.createElement("li");
+        li.className = "list-group-item";
+
+        li.innerHTML = `
+            <div class="d-flex justify-content-between">
+                <strong>${item.nome}</strong>
+                <small>${item.quantidade} x R$ ${item.preco.toFixed(2)} = <strong>R$ ${item.subtotal.toFixed(2)}</strong></small>
+            </div>`;
+
+        lista.appendChild(li);
+    });
 }
-
-
-controlador();
