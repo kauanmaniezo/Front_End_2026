@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Grupos e Fatos</title>
+  <style>
+
+    /* ── Reset e base ── */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f0f4f8;
+      font-family: Arial, sans-serif;
+      color: #2d2d2d;
+      padding: 40px 20px;
+    }
+
+    /* ── Cabeçalho centralizado ── */
+    .cabecalho {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+      background: linear-gradient(135deg, #1a3c5e, #2e6da4);
+      border-radius: 12px;
+      margin-bottom: 40px;
+      border: 2px solid #1a3c5e;
+    }
+
+    .cabecalho h1 {
+      color: #ffffff;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    /* ── Contêiner dos cartões ── */
+    .container-grupos {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Cartão de cada grupo ── */
+    .cartao-grupo {
+      background-color: #ffffff;
+      border: 1px solid #cdd8e3;
+      border-radius: 14px;
+      padding: 28px 24px;
+      width: 280px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .cartao-grupo h2 {
+      color: #1a3c5e;
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #2e6da4;
+      padding-bottom: 8px;
+    }
+
+    .cartao-grupo h3 {
+      color: #2e6da4;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    /* ── Lista de seleções ── */
+    .lista-selecoes {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    .lista-selecoes li {
+      background-color: #eaf1fb;
+      color: #1a3c5e;
+      border: 1px solid #b8d0ea;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* ── Saiba Mais (details) ── */
+    .saiba-mais {
+      background-color: #f7fafd;
+      border: 1px solid #b8d0ea;
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .saiba-mais summary {
+      color: #2e6da4;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .saiba-mais summary:hover {
+      color: #1a3c5e;
+    }
+
+    .saiba-mais p {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* ── Botão Próximo ── */
+    .container-botao {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px;
+    }
+
+    .btn-proximo {
+      background-color: #2e6da4;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-proximo:hover {
+      background-color: #1a3c5e;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Cabeçalho -->
+  <div class="cabecalho">
+    <h1>⚽ Grupos e Fatos</h1>
+  </div>
+
+  <!-- Cartões -->
+  <div class="container-grupos" id="container-grupos">
+
+    <div id="grupo-1" class="cartao-grupo">
+      <h2 id="titulo-1"></h2>
+      <h3>Seleções</h3>
+      <ul class="lista-selecoes" id="lista-1"></ul>
+      <details class="saiba-mais" id="details-1">
+        <summary>Saiba Mais</summary>
+        <p id="fato-1"></p>
+      </details>
+    </div>
+
+    <div id="grupo-2" class="cartao-grupo">
+      <h2 id="titulo-2"></h2>
+      <h3>Seleções</h3>
+      <ul class="lista-selecoes" id="lista-2"></ul>
+      <details class="saiba-mais" id="details-2">
+        <summary>Saiba Mais</summary>
+        <p id="fato-2"></p>
+      </details>
+    </div>
+
+    <div id="grupo-3" class="cartao-grupo">
+      <h2 id="titulo-3"></h2>
+      <h3>Seleções</h3>
+      <ul class="lista-selecoes" id="lista-3"></ul>
+      <details class="saiba-mais" id="details-3">
+        <summary>Saiba Mais</summary>
+        <p id="fato-3"></p>
+      </details>
+    </div>
+
+  </div>
+
+  <!-- Botão Próximo -->
+  <div class="container-botao">
+    <button class="btn-proximo" onclick="alternarGrupos()">Próximo</button>
+  </div>
+
+  <script>
+
+    // ── Dados dos dois conjuntos de grupos ──
+    var conjuntos = [
+      [
+        {
+          titulo: "🅰️ Grupo A",
+          selecoes: ["México", "África do Sul", "Coreia do Sul", "República Tcheca"],
+          fato: "O jogo de abertura será México x África do Sul. Confrontos entre Coreia do Sul e seleções europeias já ocorreram em várias Copas, com histórico equilibrado."
+        },
+        {
+          titulo: "🅱️ Grupo B",
+          selecoes: ["Canadá", "Suíça", "Catar", "Vaga Europeia (Bósnia)"],
+          fato: "O Canadá joga em casa, fator importante de desempenho. Catar e Suíça já se enfrentaram recentemente em amistosos internacionais."
+        },
+        {
+          titulo: "🅲 Grupo C",
+          selecoes: ["Brasil", "Marrocos", "Haiti", "Escócia"],
+          fato: "Brasil, Marrocos e Escócia já dividiram grupo em 1998. Brasil nunca perdeu para a Escócia em Copas."
+        }
+      ],
+      [
+        {
+          titulo: "🅳 Grupo D",
+          selecoes: ["Estados Unidos", "Paraguai", "Austrália", "Turquia"],
+          fato: "Os EUA jogam em casa, vantagem histórica em Copas. Austrália enfrenta frequentemente seleções sul-americanas em torneios."
+        },
+        {
+          titulo: "🅴 Grupo E",
+          selecoes: ["Alemanha", "Equador", "Costa do Marfim", "Curaçao"],
+          fato: "Alemanha costuma dominar fases de grupos. Equador e Costa do Marfim têm estilos físicos semelhantes."
+        },
+        {
+          titulo: "🅵 Grupo F",
+          selecoes: ["Holanda", "Japão", "Tunísia", "Suécia"],
+          fato: "Holanda e Japão já se enfrentaram em edições anteriores. Tunísia e Suécia trazem estilos contrastantes ao grupo."
+        }
+      ]
+    ];
+
+    // Índice do conjunto atualmente exibido
+    var conjuntoAtual = 0;
+
+    // ── Função que preenche os cartões com os dados do conjunto ──
+    function preencherCartoes(indice) {
+      var grupos = conjuntos[indice];
+
+      for (var i = 0; i < grupos.length; i++) {
+        var numero = i + 1;
+        var grupo = grupos[i];
+
+        // Título
+        document.getElementById("titulo-" + numero).textContent = grupo.titulo;
+
+        // Lista de seleções
+        var lista = document.getElementById("lista-" + numero);
+        lista.innerHTML = "";
+        for (var j = 0; j < grupo.selecoes.length; j++) {
+          var item = document.createElement("li");
+          item.textContent = grupo.selecoes[j];
+          lista.appendChild(item);
+        }
+
+        // Fato
+        document.getElementById("fato-" + numero).textContent = grupo.fato;
+
+        // Fecha o details ao trocar
+        document.getElementById("details-" + numero).removeAttribute("open");
+      }
+    }
+
+    // ── Função chamada pelo onclick do botão ──
+    function alternarGrupos() {
+      conjuntoAtual = conjuntoAtual === 0 ? 1 : 0;
+      preencherCartoes(conjuntoAtual);
+    }
+
+    // ── Inicializa a página com o primeiro conjunto ──
+    preencherCartoes(conjuntoAtual);
+
+  </script>
+
+</body>
+</html>
