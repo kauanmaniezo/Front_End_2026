@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Grupos e Fatos</title>
+  <style>
+
+    /* ── Reset e base ── */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f0f4f8;
+      font-family: Arial, sans-serif;
+      color: #2d2d2d;
+      padding: 40px 20px;
+    }
+
+    /* ── Cabeçalho centralizado ── */
+    .cabecalho {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 16px;
+      background: linear-gradient(135deg, #1a3c5e, #2e6da4);
+      border-radius: 12px;
+      margin-bottom: 40px;
+      border: 2px solid #1a3c5e;
+    }
+
+    .cabecalho h1 {
+      color: #ffffff;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    /* ── Contêiner dos cartões ── */
+    .container-grupos {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Cartão de cada grupo ── */
+    .cartao-grupo {
+      background-color: #ffffff;
+      border: 1px solid #cdd8e3;
+      border-radius: 14px;
+      padding: 28px 24px;
+      width: 280px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .cartao-grupo h2 {
+      color: #1a3c5e;
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #2e6da4;
+      padding-bottom: 8px;
+    }
+
+    .cartao-grupo h3 {
+      color: #2e6da4;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    /* ── Lista de seleções ── */
+    .lista-selecoes {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    .lista-selecoes li {
+      background-color: #eaf1fb;
+      color: #1a3c5e;
+      border: 1px solid #b8d0ea;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* ── Saiba Mais (details) ── */
+    .saiba-mais {
+      background-color: #f7fafd;
+      border: 1px solid #b8d0ea;
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .saiba-mais summary {
+      color: #2e6da4;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .saiba-mais summary:hover {
+      color: #1a3c5e;
+    }
+
+    .saiba-mais p {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Cabeçalho -->
+  <div class="cabecalho">
+    <h1>⚽ Grupos e Fatos</h1>
+  </div>
+
+  <!-- Cartões -->
+  <div class="container-grupos">
+
+    <div id="grupo-a" class="cartao-grupo">
+      <h2>🅰️ Grupo A</h2>
+      <h3>Seleções</h3>
+      <ul class="lista-selecoes">
+        <li>México</li>
+        <li>África do Sul</li>
+        <li>Coreia do Sul</li>
+        <li>República Tcheca</li>
+      </ul>
+      <details id="saiba-mais-a" class="saiba-mais">
+        <summary>Saiba Mais</summary>
+        <p>O jogo de abertura será México x África do Sul. Confrontos entre Coreia do Sul e seleções europeias já ocorreram em várias Copas, com histórico equilibrado.</p>
+      </details>
+    </div>
+
+    <div id="grupo-b" class="cartao-grupo">
+      <h2>🅱️ Grupo B</h2>
+      <h3>Seleções</h3>
+      <ul class="lista-selecoes">
+        <li>Canadá</li>
+        <li>Suíça</li>
+        <li>Catar</li>
+        <li>Vaga Europeia (Bósnia)</li>
+      </ul>
+      <details id="saiba-mais-b" class="saiba-mais">
+        <summary>Saiba Mais</summary>
+        <p>O Canadá joga em casa, fator importante de desempenho. Catar e Suíça já se enfrentaram recentemente em amistosos internacionais.</p>
+      </details>
+    </div>
+
+    <div id="grupo-c" class="cartao-grupo">
+      <h2>🅲 Grupo C</h2>
+      <h3>Seleções</h3>
+      <ul class="lista-selecoes">
+        <li>Brasil</li>
+        <li>Marrocos</li>
+        <li>Haiti</li>
+        <li>Escócia</li>
+      </ul>
+      <details id="saiba-mais-c" class="saiba-mais">
+        <summary>Saiba Mais</summary>
+        <p>Brasil, Marrocos e Escócia já dividiram grupo em 1998. Brasil nunca perdeu para a Escócia em Copas.</p>
+      </details>
+    </div>
+
+  </div>
+
+</body>
+</html>
