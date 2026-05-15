@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validador de CPF</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e0e;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #f0ede8;
+      --muted: #555;
+      --accent: #c8f04a;
+      --green: #4ade80;
+      --red: #f87171;
+      --green-bg: rgba(74, 222, 128, 0.07);
+      --red-bg: rgba(248, 113, 113, 0.07);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow: hidden;
+    }
+
+    /* Decorative grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* Glowing blob */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -10%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(200,240,74,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3rem 2.5rem 2.5rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.03), 0 32px 64px rgba(0,0,0,0.6);
+    }
+
+    /* Top accent bar */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      border-radius: 4px 4px 0 0;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 3px 8px;
+      border-radius: 2px;
+      margin-bottom: 1.2rem;
+      opacity: 0.85;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 2rem;
+    }
+
+    .field-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]::placeholder { color: #333; }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200,240,74,0.08);
+    }
+
+    button {
+      background: var(--accent);
+      color: #0e0e0e;
+      border: none;
+      border-radius: 3px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.2rem;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    button:hover { opacity: 0.88; }
+    button:active { transform: scale(0.97); }
+
+    /* Result box */
+    .result {
+      border-radius: 3px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s, border-color 0.3s;
+      border: 1px solid transparent;
+      pointer-events: none;
+    }
+
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .result.valid {
+      background: var(--green-bg);
+      border-color: rgba(74,222,128,0.25);
+      color: var(--green);
+    }
+
+    .result.invalid {
+      background: var(--red-bg);
+      border-color: rgba(248,113,113,0.25);
+      color: var(--red);
+    }
+
+    .result-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .result-text strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.1rem;
+    }
+
+    .result-text span {
+      opacity: 0.7;
+      font-size: 0.7rem;
+    }
+
+    /* CPF display segments */
+    .cpf-display {
+      margin-top: 0.7rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 0.6rem;
+    }
+
+    .cpf-display .cpf-formatted {
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .cpf-display .cpf-formatted.valid { color: var(--green); }
+    .cpf-display .cpf-formatted.invalid { color: var(--red); }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.8rem 0 1.2rem;
+    }
+
+    .footer-info {
+      font-size: 0.62rem;
+      color: #333;
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="tag">Exercício 01</div>
+    <h1>Validador<br>de CPF</h1>
+    <p class="subtitle">// Verificação pelos dígitos verificadores</p>
+
+    <label class="field-label" for="cpf-input">Número do CPF</label>
+    <div class="input-row">
+      <input type="text" id="cpf-input" placeholder="000.000.000-00" maxlength="14" autocomplete="off" />
+      <button onclick="validar()">Validar</button>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-icon" id="result-icon"></div>
+      <div class="result-text">
+        <strong id="result-title"></strong>
+        <span id="result-desc"></span>
+        <div class="cpf-display" id="cpf-display">
+          <span class="cpf-formatted" id="cpf-formatted"></span>
+          <span id="cpf-digits-info"></span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="footer-info">
+      <span>CPF — Cadastro de Pessoa Física</span>
+      <span>Receita Federal</span>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('cpf-input');
+
+    // Auto-format while typing
+    input.addEventListener('input', () => {
+      let v = input.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+      else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+      else if (v.length > 3) v = v.replace(/^(\d{3})(\d{1,3})/, '$1.$2');
+      input.value = v;
+    });
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') validar();
+    });
+
+    function calcularDigito(numeros, pesoInicial) {
+      let soma = 0;
+      for (let i = 0; i < numeros.length; i++) {
+        soma += numeros[i] * (pesoInicial - i);
+      }
+      const resto = (soma * 10) % 11;
+      return resto === 10 ? 0 : resto;
+    }
+
+    function validarCPF(cpf) {
+      const digits = cpf.replace(/\D/g, '');
+
+      if (digits.length !== 11) return { ok: false, reason: 'Deve conter 11 dígitos' };
+
+      // Rejeitar sequências iguais (ex: 111.111.111-11)
+      if (/^(\d)\1{10}$/.test(digits)) return { ok: false, reason: 'Sequência inválida' };
+
+      const nums = digits.split('').map(Number);
+
+      // 1º dígito verificador
+      const d1 = calcularDigito(nums.slice(0, 9), 10);
+      // 2º dígito verificador
+      const d2 = calcularDigito(nums.slice(0, 10), 11);
+
+      if (d1 === nums[9] && d2 === nums[10]) {
+        return { ok: true, d1, d2 };
+      }
+      return { ok: false, reason: 'Dígitos verificadores incorretos', d1, d2 };
+    }
+
+    function formatarCPF(digits) {
+      return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+    }
+
+    function validar() {
+      const raw = input.value;
+      const digits = raw.replace(/\D/g, '');
+      const resultado = validarCPF(raw);
+
+      const box = document.getElementById('result');
+      const icon = document.getElementById('result-icon');
+      const title = document.getElementById('result-title');
+      const desc = document.getElementById('result-desc');
+      const formatted = document.getElementById('cpf-formatted');
+      const dinfo = document.getElementById('cpf-digits-info');
+
+      box.classList.remove('show', 'valid', 'invalid');
+
+      // Trigger reflow for re-animation
+      void box.offsetWidth;
+
+      if (resultado.ok) {
+        box.classList.add('valid');
+        icon.textContent = '✓';
+        title.textContent = 'CPF Válido';
+        desc.textContent = 'Os dígitos verificadores conferem.';
+        formatted.className = 'cpf-formatted valid';
+        formatted.textContent = formatarCPF(digits);
+        dinfo.textContent = `D¹ = ${resultado.d1}  ·  D² = ${resultado.d2}`;
+      } else {
+        box.classList.add('invalid');
+        icon.textContent = '✗';
+        title.textContent = 'CPF Inválido';
+        desc.textContent = resultado.reason || 'Verifique os dados digitados.';
+        formatted.className = 'cpf-formatted invalid';
+        formatted.textContent = digits.length === 11 ? formatarCPF(digits) : digits || '—';
+        if (resultado.d1 !== undefined) {
+          dinfo.textContent = `Esperado: D¹=${resultado.d1} D²=${resultado.d2}  ·  Recebido: D¹=${digits[9]??'?'} D²=${digits[10]??'?'}`;
+        } else {
+          dinfo.textContent = '';
+        }
+      }
+
+      box.classList.add('show');
+    }
+  </script>
+</body>
+</html>
