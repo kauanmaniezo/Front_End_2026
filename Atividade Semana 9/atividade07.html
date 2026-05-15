@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Guard — Infinity Bank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #050709;
+      --panel:    #080c10;
+      --surface:  #0d1117;
+      --border:   #161d26;
+      --border2:  #1e2a38;
+      --grid:     rgba(0,200,150,0.04);
+
+      --text:     #d0e8d8;
+      --muted:    #3a5a48;
+      --dim:      #1e3028;
+      --soft:     #5a8a6a;
+
+      --green:    #00e87a;
+      --green2:   #00b85e;
+      --green-dim:#001a0e;
+      --red:      #ff3c5a;
+      --red-dim:  #1a0008;
+      --amber:    #ffaa00;
+      --cyan:     #00cfff;
+
+      --visa:     #5a8fff;
+      --master:   #ff6b35;
+      --elo:      #ffe030;
+      --amex:     #60cfff;
+      --hipercard:#ff4060;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+    }
+
+    /* Scan-line overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.15) 2px,
+        rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* Grid pattern */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Corner glow */
+    .glow-tl {
+      position: fixed; top: -100px; left: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,232,122,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 580px;
+    }
+
+    /* ── Header ── */
+    .hdr {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1.6rem;
+    }
+
+    .hdr-left {}
+
+    .hdr-sys {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--green2);
+      letter-spacing: 0.14em;
+      margin-bottom: 0.35rem;
+    }
+
+    .hdr-title {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .hdr-title span { color: var(--green); }
+
+    .hdr-sub {
+      font-size: 0.72rem;
+      color: var(--soft);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    .hdr-right {
+      text-align: right;
+    }
+
+    .hdr-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .hdr-badge .active { color: var(--green); }
+
+    /* ── Card shell ── */
+    .shell {
+      background: var(--panel);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(0,232,122,0.04),
+        inset 0 1px 0 rgba(0,232,122,0.05),
+        0 30px 80px rgba(0,0,0,0.7);
+    }
+
+    /* Top status bar */
+    .status-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    .status-bar .sb-left { display: flex; gap: 1.2rem; }
+    .status-bar .sb-item { display: flex; align-items: center; gap: 0.4rem; }
+    .sb-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .status-bar .sb-right { color: var(--dim); }
+
+    /* Input section */
+    .input-sec {
+      padding: 1.8rem 1.8rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .field-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--soft);
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+    }
+
+    /* The card visual input */
+    .card-visual {
+      background: linear-gradient(135deg, #0d1820 0%, #0a1510 50%, #0d1820 100%);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Holographic shimmer */
+    .card-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 6px,
+        rgba(0,232,122,0.015) 6px,
+        rgba(0,232,122,0.015) 7px
+      );
+      pointer-events: none;
+    }
+
+    .card-chip {
+      width: 32px; height: 24px;
+      background: linear-gradient(135deg, #8a7a3a, #c9a84c, #8a7a3a);
+      border-radius: 3px;
+      margin-bottom: 0.8rem;
+      position: relative;
+    }
+
+    .card-chip::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(0,0,0,0.3);
+      border-radius: 2px;
+    }
+
+    .card-number-display {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.3rem;
+      letter-spacing: 0.22em;
+      color: var(--text);
+      margin-bottom: 0.8rem;
+      min-height: 1.6rem;
+      transition: color 0.3s;
+    }
+
+    .card-number-display.empty { color: var(--muted); }
+
+    .card-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .card-holder-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .card-holder-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .card-brand-display {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* Actual input */
+    .input-row { display: flex; gap: 0.6rem; }
+
+    .num-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 3px;
+      color: var(--green);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      padding: 0.7rem 1rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, color 0.15s;
+    }
+
+    .num-input::placeholder { color: var(--dim); letter-spacing: 0.12em; }
+    .num-input:focus {
+      border-color: var(--green2);
+      box-shadow: 0 0 0 2px rgba(0,232,122,0.08), 0 0 12px rgba(0,232,122,0.05);
+    }
+
+    .analyze-btn {
+      background: transparent;
+      border: 1px solid var(--green2);
+      border-radius: 3px;
+      color: var(--green);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.7rem 1.2rem;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.08s;
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .analyze-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--green);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s ease;
+    }
+
+    .analyze-btn:hover::before { transform: scaleX(1); }
+    .analyze-btn:hover { color: #000; box-shadow: 0 0 20px rgba(0,232,122,0.2); }
+    .analyze-btn:hover span { position: relative; z-index: 1; }
+    .analyze-btn:active { transform: scale(0.97); }
+
+    .analyze-btn span { position: relative; z-index: 1; }
+
+    /* Quick test numbers */
+    .quick-tests {
+      margin-top: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .qt-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .qt-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      background: var(--surface);
+      color: var(--soft);
+      padding: 2px 7px;
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s;
+    }
+
+    .qt-btn:hover { border-color: var(--green2); color: var(--green); }
+
+    /* ── Analysis panel ── */
+    .analysis-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .analysis-panel.show { max-height: 700px; }
+
+    .panel-inner { padding: 1.5rem 1.8rem 1.8rem; }
+
+    /* Verdict */
+    .verdict {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      border-radius: 3px;
+      border: 1px solid;
+      margin-bottom: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .verdict::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, currentColor, transparent);
+      opacity: 0.04;
+    }
+
+    .verdict.valid   { border-color: rgba(0,232,122,0.3); color: var(--green); background: var(--green-dim); }
+    .verdict.invalid { border-color: rgba(255,60,90,0.3); color: var(--red);   background: var(--red-dim); }
+
+    .verdict-icon {
+      font-size: 1.8rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .verdict-text {}
+
+    .verdict-status {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .verdict-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      opacity: 0.7;
+      margin-top: 0.15rem;
+    }
+
+    .luhn-score {
+      margin-left: auto;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .luhn-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .luhn-lbl {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.14em;
+      opacity: 0.5;
+      text-transform: uppercase;
+      margin-top: 0.15rem;
+    }
+
+    /* Info grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .info-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.75rem 0.9rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Left accent bar */
+    .info-cell::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+    }
+
+    .info-cell.ic-brand::before   { background: var(--cyan); }
+    .info-cell.ic-sector::before  { background: var(--amber); }
+    .info-cell.ic-bank::before    { background: var(--green); }
+    .info-cell.ic-product::before { background: var(--visa); }
+
+    .ic-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.5rem;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .ic-value {
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+    }
+
+    .ic-value.cyan  { color: var(--cyan); }
+    .ic-value.amber { color: var(--amber); }
+    .ic-value.green { color: var(--green); }
+    .ic-value.blue  { color: var(--visa); }
+
+    .ic-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--soft);
+      margin-top: 0.2rem;
+      letter-spacing: 0.06em;
+    }
+
+    /* IIN breakdown table */
+    .iin-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .iin-header {
+      background: var(--border);
+      padding: 0.5rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .iin-header span {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      color: var(--soft);
+      text-transform: uppercase;
+    }
+
+    .iin-header .iin-num {
+      color: var(--green);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+    }
+
+    .iin-rows { }
+
+    .iin-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      padding: 0.5rem 0.9rem;
+      border-top: 1px solid var(--border);
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .iin-row:first-child { border-top: none; }
+
+    .iin-digits {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--green);
+      letter-spacing: 0.12em;
+    }
+
+    .iin-field {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--soft);
+    }
+
+    .iin-meaning {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* Luhn steps */
+    .luhn-section {
+      margin-top: 0.6rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .luhn-hdr {
+      background: var(--border);
+      padding: 0.5rem 0.9rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      color: var(--soft);
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .luhn-sum-badge {
+      font-size: 0.6rem;
+      color: var(--green);
+    }
+
+    .luhn-digits {
+      padding: 0.8rem 0.9rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    .ld {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--soft);
+      position: relative;
+    }
+
+    .ld.doubled {
+      border-color: rgba(0,232,122,0.3);
+      color: var(--green);
+      background: rgba(0,232,122,0.04);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-tl"></div>
+
+  <div class="wrapper">
+
+    <!-- Header -->
+    <div class="hdr">
+      <div class="hdr-left">
+        <div class="hdr-sys">// SYS: INFINITY BANK SECURITY · EX-07</div>
+        <div class="hdr-title">CARD <span>GUARD</span></div>
+        <div class="hdr-sub">Validador de Segurança · Algoritmo de Luhn</div>
+      </div>
+      <div class="hdr-right">
+        <div class="hdr-badge">
+          <div class="active">● SISTEMA ATIVO</div>
+          <div>ISO/IEC 7812</div>
+          <div>BIN/IIN ANALYSIS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shell -->
+    <div class="shell">
+
+      <!-- Status bar -->
+      <div class="status-bar">
+        <div class="sb-left">
+          <div class="sb-item"><div class="sb-dot"></div> LUHN ENGINE v2.1</div>
+          <div class="sb-item">BIN DECODER</div>
+          <div class="sb-item">ISSUER DB</div>
+        </div>
+        <div class="sb-right" id="ts">--</div>
+      </div>
+
+      <!-- Input section -->
+      <div class="input-sec">
+        <div class="field-label">// INSIRA O PAN (PRIMARY ACCOUNT NUMBER)</div>
+
+        <!-- Card visual -->
+        <div class="card-visual">
+          <div class="card-chip"></div>
+          <div class="card-number-display empty" id="card-display">•••• •••• •••• ••••</div>
+          <div class="card-bottom">
+            <div>
+              <div class="card-holder-label">CARD HOLDER</div>
+              <div class="card-holder-name">INFINITY CLIENT</div>
+            </div>
+            <div class="card-brand-display" id="card-brand-visual">—</div>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <input class="num-input" type="text" id="num-input"
+                 placeholder="0000 0000 0000 0000"
+                 maxlength="19"
+                 autocomplete="off"
+                 inputmode="numeric" />
+          <button class="analyze-btn" onclick="analisar()"><span>ANALISAR</span></button>
+        </div>
+
+        <div class="quick-tests">
+          <span class="qt-label">TESTE:</span>
+          <button class="qt-btn" onclick="setNum('4532015112830366')" title="Visa válido">VISA ✓</button>
+          <button class="qt-btn" onclick="setNum('5425233430109903')" title="Master válido">MASTER ✓</button>
+          <button class="qt-btn" onclick="setNum('374251018720955')" title="Amex válido">AMEX ✓</button>
+          <button class="qt-btn" onclick="setNum('6062826786276634')" title="Hipercard válido">HIPER ✓</button>
+          <button class="qt-btn" onclick="setNum('1234567890123456')" title="Número inválido">INVÁLIDO ✗</button>
+        </div>
+      </div>
+
+      <!-- Analysis panel -->
+      <div class="analysis-panel" id="analysis-panel">
+        <div class="panel-inner">
+
+          <!-- Verdict -->
+          <div class="verdict" id="verdict">
+            <div class="verdict-icon" id="v-icon">✓</div>
+            <div class="verdict-text">
+              <div class="verdict-status" id="v-status">—</div>
+              <div class="verdict-desc" id="v-desc">—</div>
+            </div>
+            <div class="luhn-score">
+              <div class="luhn-val" id="v-sum">—</div>
+              <div class="luhn-lbl">SOMA LUHN</div>
+            </div>
+          </div>
+
+          <!-- Info grid -->
+          <div class="info-grid">
+            <div class="info-cell ic-brand">
+              <div class="ic-label">// BANDEIRA</div>
+              <div class="ic-value cyan" id="ic-brand">—</div>
+              <div class="ic-sub" id="ic-brand-sub">—</div>
+            </div>
+            <div class="info-cell ic-sector">
+              <div class="ic-label">// SETOR INDUSTRIAL</div>
+              <div class="ic-value amber" id="ic-sector">—</div>
+              <div class="ic-sub" id="ic-sector-sub">—</div>
+            </div>
+            <div class="info-cell ic-bank">
+              <div class="ic-label">// BANCO EMISSOR</div>
+              <div class="ic-value green" id="ic-bank">—</div>
+              <div class="ic-sub" id="ic-bank-sub">—</div>
+            </div>
+            <div class="info-cell ic-product">
+              <div class="ic-label">// TIPO DE PRODUTO</div>
+              <div class="ic-value blue" id="ic-product">—</div>
+              <div class="ic-sub" id="ic-product-sub">—</div>
+            </div>
+          </div>
+
+          <!-- IIN breakdown -->
+          <div class="iin-section">
+            <div class="iin-header">
+              <span>// IIN / BIN BREAKDOWN (ISO/IEC 7812)</span>
+              <span class="iin-num" id="iin-display">—</span>
+            </div>
+            <div class="iin-rows" id="iin-rows"></div>
+          </div>
+
+          <!-- Luhn digits visual -->
+          <div class="luhn-section">
+            <div class="luhn-hdr">
+              <span>// SEQUÊNCIA DE PROCESSAMENTO LUHN</span>
+              <span class="luhn-sum-badge" id="luhn-sum-badge">SOMA = —</span>
+            </div>
+            <div class="luhn-digits" id="luhn-digits"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Timestamp ──
+    function tick() {
+      const n = new Date();
+      document.getElementById('ts').textContent =
+        n.toLocaleTimeString('pt-BR', { hour12: false }) + '.' +
+        String(n.getMilliseconds()).padStart(3,'0');
+    }
+    setInterval(tick, 100); tick();
+
+    // ── Input formatter ──
+    const numInput = document.getElementById('num-input');
+
+    numInput.addEventListener('input', () => {
+      let v = numInput.value.replace(/\D/g, '').slice(0, 16);
+      numInput.value = v.replace(/(.{4})/g, '$1 ').trim();
+      updateCardDisplay(v);
+    });
+
+    numInput.addEventListener('keydown', e => { if (e.key === 'Enter') analisar(); });
+
+    function updateCardDisplay(digits) {
+      const disp = document.getElementById('card-display');
+      const brandV = document.getElementById('card-brand-visual');
+      if (!digits) {
+        disp.textContent = '•••• •••• •••• ••••';
+        disp.classList.add('empty');
+        brandV.textContent = '—';
+        return;
+      }
+      const padded = digits.padEnd(16, '•');
+      disp.textContent = padded.replace(/(.{4})/g, '$1 ').trim();
+      disp.classList.remove('empty');
+      const b = detectBrand(digits);
+      brandV.textContent = b ? b.name : '—';
+    }
+
+    function setNum(n) {
+      const spaced = n.replace(/(.{4})/g, '$1 ').trim();
+      numInput.value = spaced;
+      updateCardDisplay(n);
+    }
+
+    // ── Brand detection ──
+    function detectBrand(d) {
+      if (/^4/.test(d))                             return { name: 'VISA',       color: '#5a8fff', network: 'Visa Inc.' };
+      if (/^5[1-5]/.test(d) || /^2[2-7]/.test(d)) return { name: 'MASTERCARD', color: '#ff6b35', network: 'Mastercard Worldwide' };
+      if (/^3[47]/.test(d))                         return { name: 'AMEX',       color: '#60cfff', network: 'American Express' };
+      if (/^(606282|637095|637568|637599)/.test(d)) return { name: 'HIPERCARD',  color: '#ff4060', network: 'Itaú Unibanco S.A.' };
+      if (/^(4011|4312|4389|6277|6362|6363|650[0-3]|6504|6505|6507|6509|655[0-8]|6516|6550)/.test(d))
+                                                    return { name: 'ELO',        color: '#ffe030', network: 'Elo Participações S.A.' };
+      if (/^(301|305|36|38)/.test(d))              return { name: 'DINERS',     color: '#aaaaff', network: 'Diners Club International' };
+      return null;
+    }
+
+    // ── Sector (MII) ──
+    const SECTORS = {
+      '0': ['ISIC Special',       'Uso Especial ISO'],
+      '1': ['Airlines',           'Aviação & Transporte Aéreo'],
+      '2': ['Airlines & Finance', 'Aviação & Financeiro'],
+      '3': ['Travel & Finance',   'Viagens, Entretenimento & Financeiro'],
+      '4': ['Banking & Finance',  'Serviços Bancários e Financeiros'],
+      '5': ['Banking & Finance',  'Serviços Bancários e Financeiros'],
+      '6': ['Merch. & Banking',   'Comercial & Bancário'],
+      '7': ['Petroleum',          'Petróleo & Energia'],
+      '8': ['Healthcare & Telecom','Saúde & Telecomunicações'],
+      '9': ['Government & National','Governo & Nacional'],
+    };
+
+    // ── Bank inference by BIN range ──
+    function inferBank(digits) {
+      const p = parseInt(digits.slice(0,6));
+      if (/^4/.test(digits)) {
+        if (p >= 453201 && p <= 453299) return ['Banco do Brasil', 'BB Visa'];
+        if (p >= 423857 && p <= 423857) return ['Nubank', 'Nu Pagamentos S.A.'];
+        if (p >= 448084 && p <= 448084) return ['Bradesco', 'Banco Bradesco S.A.'];
+        return ['Emissor Visa', 'Rede Visa Internacional'];
+      }
+      if (/^5[1-5]/.test(digits) || /^2[2-7]/.test(digits)) {
+        if (p >= 542418 && p <= 542418) return ['Itaú Unibanco', 'Mastercard Gold'];
+        if (p >= 542716 && p <= 542716) return ['Bradesco', 'Bradesco Mastercard'];
+        if (p >= 516220 && p <= 516220) return ['Nubank', 'Nu Mastercard'];
+        return ['Emissor Mastercard', 'Mastercard International'];
+      }
+      if (/^3[47]/.test(digits)) return ['American Express', 'Amex Global Network'];
+      if (/^606282/.test(digits)) return ['Itaú Unibanco', 'Hipercard S.A.'];
+      if (/^4011/.test(digits))   return ['Elo Participações', 'Consórcio Bradesco/CEF'];
+      return ['Emissor Desconhecido', 'Instituição não identificada'];
+    }
+
+    // ── Product type ──
+    function inferProduct(digits) {
+      const d6 = parseInt(digits.slice(5,8) || '0');
+      if (d6 >= 100 && d6 <= 299) return ['Pré-pago', 'Cartão pré-pago / gift card'];
+      if (d6 >= 300 && d6 <= 499) return ['Débito', 'Cartão de débito'];
+      if (d6 >= 500 && d6 <= 699) return ['Crédito', 'Cartão de crédito padrão'];
+      if (d6 >= 700 && d6 <= 799) return ['Crédito Premium', 'Produto premium / black'];
+      return ['Crédito', 'Cartão de crédito'];
+    }
+
+    // ── Luhn algorithm ──
+    function luhn(digits) {
+      const rev = digits.split('').reverse().map(Number);
+      const processed = rev.map((d, i) => {
+        if (i % 2 === 1) {
+          let v = d * 2;
+          return v > 9 ? v - 9 : v;
+        }
+        return d;
+      });
+      const sum = processed.reduce((a, b) => a + b, 0);
+      return { valid: sum % 10 === 0, sum, processed, reversed: rev };
+    }
+
+    // ── Mask number ──
+    function maskPan(digits) {
+      if (digits.length <= 8) return digits;
+      return digits.slice(0,6) + '·'.repeat(digits.length - 10) + digits.slice(-4);
+    }
+
+    // ── Main analysis ──
+    function analisar() {
+      const raw    = numInput.value.replace(/\D/g, '');
+      const digits = raw.trim();
+
+      if (!digits) return;
+      if (digits.length < 13 || digits.length > 16) {
+        showError(`Número deve ter entre 13 e 16 dígitos. (atual: ${digits.length})`);
+        return;
+      }
+
+      const { valid, sum, processed, reversed } = luhn(digits);
+      const brand   = detectBrand(digits);
+      const mii     = digits[0];
+      const sector  = SECTORS[mii] || ['Desconhecido', 'Setor não mapeado'];
+      const [bank, bankSub] = inferBank(digits);
+      const [product, productSub] = inferProduct(digits);
+      const iin     = digits.slice(0, 8);
+
+      // ── Populate verdict ──
+      const verdictEl = document.getElementById('verdict');
+      verdictEl.classList.remove('valid', 'invalid');
+      verdictEl.classList.add(valid ? 'valid' : 'invalid');
+      document.getElementById('v-icon').textContent   = valid ? '✓' : '✗';
+      document.getElementById('v-status').textContent = valid ? 'VÁLIDO' : 'INVÁLIDO';
+      document.getElementById('v-desc').textContent   =
+        valid
+          ? `Luhn check passou · Soma ${sum} ÷ 10 = 0 restante · PAN: ${maskPan(digits)}`
+          : `Luhn check falhou · Soma ${sum} · Não divisível por 10 · PAN: ${maskPan(digits)}`;
+      document.getElementById('v-sum').textContent    = sum;
+
+      // ── Info cells ──
+      document.getElementById('ic-brand').textContent     = brand ? brand.name : 'DESCONHECIDA';
+      document.getElementById('ic-brand-sub').textContent = brand ? brand.network : 'Rede não identificada';
+      document.getElementById('ic-sector').textContent    = sector[0];
+      document.getElementById('ic-sector-sub').textContent= sector[1];
+      document.getElementById('ic-bank').textContent      = bank;
+      document.getElementById('ic-bank-sub').textContent  = bankSub;
+      document.getElementById('ic-product').textContent   = product;
+      document.getElementById('ic-product-sub').textContent = productSub;
+
+      // ── IIN display ──
+      document.getElementById('iin-display').textContent = iin.replace(/(.{4})/,'$1·');
+
+      const iinData = [
+        [digits[0],        'MII — Setor Industrial',      sector[0]],
+        [digits.slice(1,5),'Código Geográfico / Emissor', bank],
+        [digits.slice(5,8),'Carteira de Produtos',        product],
+        [digits.slice(8),  'Conta + Dígito Verificador',  'Fora do IIN (dados do cliente)'],
+      ];
+
+      const iinRows = document.getElementById('iin-rows');
+      iinRows.innerHTML = '';
+      iinData.forEach(([dig, field, meaning]) => {
+        const row = document.createElement('div');
+        row.className = 'iin-row';
+        row.innerHTML = `
+          <div class="iin-digits">${dig}</div>
+          <div class="iin-field">${field}</div>
+          <div class="iin-meaning">${meaning}</div>
+        `;
+        iinRows.appendChild(row);
+      });
+
+      // ── Luhn digit grid ──
+      const luhnCont = document.getElementById('luhn-digits');
+      luhnCont.innerHTML = '';
+      // Show original reversed order with processing marks
+      processed.forEach((val, i) => {
+        const div = document.createElement('div');
+        div.className = 'ld' + (i % 2 === 1 ? ' doubled' : '');
+        div.textContent = val;
+        div.title = i % 2 === 1
+          ? `Pos ${i+1}: ${reversed[i]}×2${reversed[i]*2>9?'−9':''}=${val}`
+          : `Pos ${i+1}: ${val}`;
+        luhnCont.appendChild(div);
+      });
+      document.getElementById('luhn-sum-badge').textContent =
+        `SOMA = ${sum} · ${valid ? '✓ DIV.10' : '✗ NÃO DIV.10'}`;
+
+      // ── Show panel ──
+      const panel = document.getElementById('analysis-panel');
+      panel.classList.remove('show');
+      void panel.offsetWidth;
+      panel.classList.add('show');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function showError(msg) {
+      numInput.style.borderColor = 'var(--red)';
+      numInput.style.color = 'var(--red)';
+      setTimeout(() => {
+        numInput.style.borderColor = '';
+        numInput.style.color = '';
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
