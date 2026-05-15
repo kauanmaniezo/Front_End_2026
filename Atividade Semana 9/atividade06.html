@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infinity Bank — Crédito para Eventos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f0c09;
+      --panel:     #171310;
+      --surface:   #1e1a16;
+      --border:    #2d2820;
+      --border2:   #3d3730;
+
+      --text:      #f0ebe2;
+      --muted:     #7a7060;
+      --soft:      #5a5248;
+
+      --gold:      #c9a84c;
+      --gold-lt:   #f5e9cc;
+      --gold-dim:  rgba(201,168,76,0.12);
+      --gold-brd:  rgba(201,168,76,0.3);
+
+      --standard:  #6ea8d4;
+      --premium:   #c9a84c;
+      --deluxe:    #a87fd4;
+
+      --green:     #5db88a;
+      --green-dim: rgba(93,184,138,0.1);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* Ambient glow */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -15%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .wrapper { width: 100%; max-width: 560px; }
+
+    /* ── Masthead ── */
+    .masthead {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .ib-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--gold-brd);
+      background: var(--gold-dim);
+      border-radius: 99px;
+      padding: 4px 12px 4px 6px;
+      margin-bottom: 1.1rem;
+    }
+
+    .ib-dot {
+      width: 20px; height: 20px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem; font-weight: 700; color: #0f0c09;
+      letter-spacing: 0.04em;
+    }
+
+    .ib-pill span {
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .masthead h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+
+    .masthead h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .masthead p {
+      margin-top: 0.5rem;
+      font-size: 0.77rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.02),
+        0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    /* ── Package selector ── */
+    .pkg-section {
+      padding: 1.6rem 1.8rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.9rem;
+    }
+
+    .pkg-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.7rem;
+    }
+
+    .pkg-card {
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 0.8rem 0.9rem;
+      background: var(--surface);
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s, transform 0.12s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pkg-card:hover { transform: translateY(-2px); }
+
+    .pkg-card.active.standard { border-color: var(--standard); background: rgba(110,168,212,0.07); }
+    .pkg-card.active.premium  { border-color: var(--gold);     background: var(--gold-dim); }
+    .pkg-card.active.deluxe   { border-color: var(--deluxe);   background: rgba(168,127,212,0.07); }
+
+    /* Active glow bar */
+    .pkg-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .pkg-card.active::after        { opacity: 1; }
+    .pkg-card.standard::after      { background: var(--standard); }
+    .pkg-card.premium::after       { background: var(--gold); }
+    .pkg-card.deluxe::after        { background: var(--deluxe); }
+
+    .pkg-icon { font-size: 1.3rem; margin-bottom: 0.4rem; }
+
+    .pkg-name {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .standard .pkg-name { color: var(--standard); }
+    .premium  .pkg-name { color: var(--gold); }
+    .deluxe   .pkg-name { color: var(--deluxe); }
+
+    .pkg-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .pkg-price .pkg-pp {
+      font-size: 0.65rem;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Hidden select (for JS value) */
+    #select-pacote { display: none; }
+
+    /* ── People input ── */
+    .people-section {
+      padding: 1.4rem 1.8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .people-left .label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .people-left .hint {
+      font-size: 0.7rem;
+      color: var(--soft);
+    }
+
+    .people-right {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .counter-btn {
+      width: 32px; height: 32px;
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.12s, background 0.12s;
+      flex-shrink: 0;
+    }
+
+    .counter-btn:hover { border-color: var(--gold-brd); background: var(--gold-dim); }
+
+    input#pessoas {
+      width: 80px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0.4rem;
+      outline: none;
+      transition: border-color 0.15s;
+      -moz-appearance: textfield;
+    }
+    input#pessoas::-webkit-inner-spin-button,
+    input#pessoas::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input#pessoas:focus { border-color: var(--gold-brd); }
+
+    /* Loyalty badge */
+    .loyalty-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.68rem;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(93,184,138,0.2);
+      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.25s, transform 0.25s;
+      margin-top: 0.5rem;
+    }
+
+    .loyalty-badge.show { opacity: 1; transform: translateY(0); }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 1.2rem 1.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cta-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--gold), #a87830);
+      border: none;
+      border-radius: 8px;
+      color: #0f0c09;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.9rem;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .cta-btn:hover { opacity: 0.88; }
+    .cta-btn:active { transform: scale(0.98); }
+
+    /* ── Result ── */
+    .result-section {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.45s ease, opacity 0.35s ease;
+    }
+
+    .result-section.show {
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    .result-inner {
+      padding: 1.5rem 1.8rem 1.8rem;
+    }
+
+    .result-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+    }
+
+    /* Lines */
+    .r-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+
+    .r-line:last-child { border-bottom: none; }
+
+    .r-left { display: flex; align-items: center; gap: 0.6rem; }
+
+    .r-pip {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .r-label { font-size: 0.82rem; color: var(--muted); }
+    .r-sub   { font-size: 0.62rem; color: var(--soft); margin-top: 0.05rem; }
+
+    .r-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Discount row — hidden by default */
+    .discount-row {
+      display: none;
+    }
+
+    .discount-row.show { display: flex; }
+
+    /* Total row */
+    .total-row {
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-brd) !important;
+      border-radius: 8px;
+      padding: 0.9rem 0.9rem !important;
+      margin-top: 0.4rem;
+    }
+
+    .total-row .r-label { color: var(--text); font-weight: 600; font-size: 0.9rem; }
+    .total-row .r-val   { font-size: 1.5rem; color: var(--gold); }
+
+    /* Per-person chip */
+    .per-person {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .per-person strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- Masthead -->
+    <div class="masthead">
+      <div class="ib-pill">
+        <div class="ib-dot">IB</div>
+        <span>Infinity Bank · Exercício 06</span>
+      </div>
+      <h1>Crédito para<br><em>Festas & Eventos</em></h1>
+      <p>Orçamento instantâneo para eventos corporativos</p>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+
+      <!-- Package selector -->
+      <div class="pkg-section">
+        <div class="section-label">01 — Escolha o pacote</div>
+        <div class="pkg-cards">
+          <div class="pkg-card standard active" data-value="standard" data-price="50" onclick="selecionarPacote(this)">
+            <div class="pkg-icon">🥂</div>
+            <div class="pkg-name">Standard</div>
+            <div class="pkg-price">R$&nbsp;50<span class="pkg-pp">/pax</span></div>
+          </div>
+          <div class="pkg-card premium" data-value="premium" data-price="80" onclick="selecionarPacote(this)">
+            <div class="pkg-icon">✨</div>
+            <div class="pkg-name">Premium</div>
+            <div class="pkg-price">R$&nbsp;80<span class="pkg-pp">/pax</span></div>
+          </div>
+          <div class="pkg-card deluxe" data-value="deluxe" data-price="120" onclick="selecionarPacote(this)">
+            <div class="pkg-icon">👑</div>
+            <div class="pkg-name">Infinity<br>Deluxe</div>
+            <div class="pkg-price">R$&nbsp;120<span class="pkg-pp">/pax</span></div>
+          </div>
+        </div>
+        <select id="select-pacote">
+          <option value="standard" data-price="50">Standard</option>
+          <option value="premium"  data-price="80">Premium</option>
+          <option value="deluxe"   data-price="120">Infinity Deluxe</option>
+        </select>
+      </div>
+
+      <!-- People input -->
+      <div class="people-section">
+        <div class="people-left">
+          <div class="label">02 — Nº de convidados</div>
+          <div class="hint">Acima de 100: desconto fidelidade de 5%</div>
+          <div class="loyalty-badge" id="loyalty-badge">
+            🎁 Desconto fidelidade disponível!
+          </div>
+        </div>
+        <div class="people-right">
+          <button class="counter-btn" onclick="ajustarPessoas(-10)" title="−10">−</button>
+          <input type="number" id="pessoas" value="50" min="1" max="9999" />
+          <button class="counter-btn" onclick="ajustarPessoas(+10)" title="+10">+</button>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-section">
+        <button class="cta-btn" onclick="calcular()">Calcular Orçamento</button>
+      </div>
+
+      <!-- Result -->
+      <div class="result-section" id="result-section">
+        <div class="result-inner">
+          <div class="result-title">Resumo do orçamento</div>
+
+          <div class="r-line">
+            <div class="r-left">
+              <div class="r-pip" style="background:#6ea8d4"></div>
+              <div>
+                <div class="r-label">Custo bruto</div>
+                <div class="r-sub" id="r-sub-bruto">—</div>
+              </div>
+            </div>
+            <div class="r-val" id="r-bruto">—</div>
+          </div>
+
+          <div class="r-line">
+            <div class="r-left">
+              <div class="r-pip" style="background:#c9a84c"></div>
+              <div>
+                <div class="r-label">Taxa de serviço</div>
+                <div class="r-sub">10% sobre o custo bruto</div>
+              </div>
+            </div>
+            <div class="r-val" id="r-taxa">—</div>
+          </div>
+
+          <div class="r-line discount-row" id="r-discount-row">
+            <div class="r-left">
+              <div class="r-pip" style="background:#5db88a"></div>
+              <div>
+                <div class="r-label">Desconto fidelidade</div>
+                <div class="r-sub">5% — acima de 100 convidados</div>
+              </div>
+            </div>
+            <div class="r-val" style="color:#5db88a" id="r-desconto">—</div>
+          </div>
+
+          <div class="r-line total-row">
+            <div class="r-left">
+              <div class="r-pip" style="background:var(--gold)"></div>
+              <div class="r-label">Total final</div>
+            </div>
+            <div class="r-val" id="r-total">—</div>
+          </div>
+
+          <div class="per-person" id="r-perpessoa"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let precoPacote = 50; // default Standard
+
+    const inputPessoas = document.getElementById('pessoas');
+    const loyaltyBadge = document.getElementById('loyalty-badge');
+
+    // ── Package select ──
+    function selecionarPacote(el) {
+      document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      precoPacote = Number(el.dataset.price);
+      document.getElementById('select-pacote').value = el.dataset.value;
+    }
+
+    // ── Counter buttons ──
+    function ajustarPessoas(delta) {
+      const v = Math.max(1, (Number(inputPessoas.value) || 0) + delta);
+      inputPessoas.value = v;
+      verificarFidelidade();
+    }
+
+    // ── Loyalty hint ──
+    inputPessoas.addEventListener('input', verificarFidelidade);
+    function verificarFidelidade() {
+      const n = Number(inputPessoas.value);
+      loyaltyBadge.classList.toggle('show', n > 100);
+    }
+
+    // ── Format ──
+    function fmt(v) {
+      return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    // ── Calcular ──
+    function calcular() {
+      const pessoas = Number(inputPessoas.value);
+      if (!pessoas || pessoas < 1) {
+        inputPessoas.style.borderColor = 'var(--red, #ef4444)';
+        inputPessoas.focus();
+        setTimeout(() => inputPessoas.style.borderColor = '', 1000);
+        return;
+      }
+      inputPessoas.style.borderColor = '';
+
+      // 1. Custo bruto
+      const custoBruto = precoPacote * pessoas;
+
+      // 2. Taxa de serviço (10%)
+      const taxa = custoBruto * 0.10;
+      const comTaxa = custoBruto + taxa;
+
+      // 3. Desconto fidelidade (5% se > 100 pessoas)
+      const temDesconto = pessoas > 100;
+      const desconto = temDesconto ? comTaxa * 0.05 : 0;
+
+      // 4. Total final
+      const total = comTaxa - desconto;
+      const porPessoa = total / pessoas;
+
+      // ── Populate ──
+      const pkgNomes = { standard: 'Standard', premium: 'Premium', deluxe: 'Infinity Deluxe' };
+      const pkgAtivo = document.querySelector('.pkg-card.active').dataset.value;
+
+      document.getElementById('r-sub-bruto').textContent =
+        `${pessoas} pessoa${pessoas !== 1 ? 's' : ''} × ${fmt(precoPacote)} (${pkgNomes[pkgAtivo]})`;
+      document.getElementById('r-bruto').textContent   = fmt(custoBruto);
+      document.getElementById('r-taxa').textContent    = `+ ${fmt(taxa)}`;
+      document.getElementById('r-total').textContent   = fmt(total);
+      document.getElementById('r-perpessoa').innerHTML =
+        `Custo por convidado: <strong>${fmt(porPessoa)}</strong>`;
+
+      // Discount row
+      const discRow = document.getElementById('r-discount-row');
+      if (temDesconto) {
+        discRow.classList.add('show');
+        document.getElementById('r-desconto').textContent = `− ${fmt(desconto)}`;
+      } else {
+        discRow.classList.remove('show');
+      }
+
+      // Show result
+      const section = document.getElementById('result-section');
+      section.classList.remove('show');
+      void section.offsetWidth;
+      section.classList.add('show');
+      section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Init loyalty check
+    verificarFidelidade();
+  </script>
+</body>
+</html>
