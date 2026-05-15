@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infinity Bank — Simulador</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #060910;
+      --panel:    #0c1018;
+      --surface:  #111620;
+      --border:   #1e2535;
+      --border2:  #2a3348;
+      --text:     #e8edf5;
+      --muted:    #4a5568;
+      --soft:     #8899aa;
+
+      --accent:   #00d4ff;
+      --accent2:  #7c3aed;
+      --gold:     #f0b429;
+
+      --visa:     #1a1f71;
+      --visa-acc: #f7a600;
+      --master:   #eb001b;
+      --master2:  #f79e1b;
+      --elo:      #000000;
+      --elo-acc:  #ffcb05;
+
+      --green:    #10b981;
+      --red:      #ef4444;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    /* Radial glow top-right */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%; right: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -10%; left: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(124,58,237,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* ── Logo bar ── */
+    .logo-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-name {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .logo-name span { color: var(--accent); }
+
+    .badge-ex {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    }
+
+    /* Card header */
+    .card-header {
+      padding: 1.6rem 1.8rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(0,212,255,0.04), rgba(124,58,237,0.04));
+    }
+
+    .card-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .card-header p {
+      font-size: 0.72rem;
+      color: var(--soft);
+      margin-top: 0.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* Card body */
+    .card-body {
+      padding: 1.6rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    /* Fields */
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .field label {
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--soft);
+      font-weight: 500;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-prefix {
+      position: absolute;
+      left: 0.9rem; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input[type="number"] {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.05rem;
+      padding-left: 2.2rem;
+      -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    input::placeholder { color: #2a3348; }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+    }
+
+    select { cursor: pointer; appearance: none; padding-right: 2.2rem; }
+
+    .select-wrap { position: relative; }
+
+    .select-arrow {
+      position: absolute;
+      right: 0.9rem; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--muted);
+    }
+
+    /* Bandeira chips */
+    .chips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+    }
+
+    .chip {
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      background: var(--surface);
+    }
+
+    .chip:hover { border-color: var(--border2); transform: translateY(-1px); }
+
+    .chip.active.visa  { border-color: var(--visa-acc); background: rgba(247,166,0,0.07); }
+    .chip.active.master{ border-color: var(--master);   background: rgba(235,0,27,0.07); }
+    .chip.active.elo   { border-color: var(--elo-acc);  background: rgba(255,203,5,0.07); }
+
+    .chip-logo { width: 44px; height: 28px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+
+    /* Mini card logos */
+    .visa-logo  { background: #1a1f71; font-family: serif; font-style: italic; font-weight: 700; color: #fff; font-size: 0.75rem; letter-spacing: -0.04em; }
+    .master-logo { background: #252525; position: relative; overflow: hidden; }
+    .master-logo::before, .master-logo::after {
+      content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; top: 50%; transform: translateY(-50%);
+    }
+    .master-logo::before { background: var(--master); left: 4px; }
+    .master-logo::after  { background: var(--master2); right: 4px; mix-blend-mode: screen; }
+    .elo-logo   { background: #000; color: var(--elo-acc); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.06em; }
+
+    .chip-name  { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--soft); }
+    .chip-rate  { font-family: 'Space Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+    .chip.active .chip-rate { color: var(--accent); }
+
+    /* Parcelas selector */
+    .parcelas-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.45rem;
+    }
+
+    .parc-btn {
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: var(--surface);
+      color: var(--soft);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      padding: 0.55rem 0;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+    }
+
+    .parc-btn:hover { border-color: var(--border2); color: var(--text); }
+
+    .parc-btn.active {
+      border-color: var(--accent);
+      background: rgba(0,212,255,0.08);
+      color: var(--accent);
+    }
+
+    .parc-fee {
+      font-size: 0.5rem;
+      opacity: 0.6;
+      letter-spacing: 0.04em;
+    }
+
+    /* CTA button */
+    .cta {
+      background: linear-gradient(135deg, var(--accent), #0099cc);
+      border: none;
+      border-radius: 8px;
+      color: #060910;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.15s, transform 0.1s;
+      margin-top: 0.3rem;
+    }
+    .cta:hover { opacity: 0.88; }
+    .cta:active { transform: scale(0.98); }
+
+    /* ── Result card ── */
+    .result-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.4s ease;
+    }
+
+    .result-card.show {
+      max-height: 600px;
+      opacity: 1;
+    }
+
+    .result-header {
+      padding: 1.1rem 1.8rem;
+      background: linear-gradient(90deg, rgba(0,212,255,0.06), transparent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .result-header h3 {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--soft);
+    }
+
+    .result-header .res-bandeira {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .result-body {
+      padding: 1.4rem 1.8rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    /* Big total */
+    .total-display {
+      text-align: center;
+      padding: 1.2rem;
+      background: var(--surface);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 0.4rem;
+    }
+
+    .total-display .total-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .total-display .total-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+
+    .total-display .total-parc {
+      font-size: 0.75rem;
+      color: var(--soft);
+      margin-top: 0.2rem;
+    }
+
+    /* Line items */
+    .line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .line:last-child { border-bottom: none; }
+
+    .line-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .line-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .line-label { font-size: 0.8rem; color: var(--soft); }
+    .line-sub   { font-size: 0.62rem; color: var(--muted); margin-top: 0.05rem; }
+
+    .line-val {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .line-val.pos { color: var(--red); }
+    .line-val.base{ color: var(--text); }
+
+    /* Monthly fee notice */
+    .monthly-note {
+      font-size: 0.62rem;
+      color: var(--muted);
+      text-align: center;
+      padding-top: 0.4rem;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- Logo bar -->
+    <div class="logo-bar">
+      <div class="logo">
+        <div class="logo-mark">IB</div>
+        <div class="logo-name">Infinity<span>Bank</span></div>
+      </div>
+      <div class="badge-ex">Exercício 04</div>
+    </div>
+
+    <!-- Input card -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Simulador de Vendas</h2>
+        <p>Calcule taxas, juros e valor de parcelas em segundos.</p>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Valor -->
+        <div class="field">
+          <label>Valor da venda</label>
+          <div class="input-wrap">
+            <span class="input-prefix">R$</span>
+            <input type="number" id="valor" min="0" step="0.01" placeholder="0,00" />
+          </div>
+        </div>
+
+        <!-- Bandeira -->
+        <div class="field">
+          <label>Bandeira do cartão</label>
+          <div class="chips">
+            <div class="chip visa active" data-band="visa" onclick="selectBandeira(this)">
+              <div class="chip-logo visa-logo">VISA</div>
+              <span class="chip-name">Visa</span>
+              <span class="chip-rate">2,00%</span>
+            </div>
+            <div class="chip master" data-band="master" onclick="selectBandeira(this)">
+              <div class="chip-logo master-logo"></div>
+              <span class="chip-name">Master</span>
+              <span class="chip-rate">1,85%</span>
+            </div>
+            <div class="chip elo" data-band="elo" onclick="selectBandeira(this)">
+              <div class="chip-logo elo-logo">elo</div>
+              <span class="chip-name">Elo</span>
+              <span class="chip-rate">3,00%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parcelas -->
+        <div class="field">
+          <label>Número de parcelas</label>
+          <div class="parcelas-grid" id="parcelas-grid">
+            <!-- generated by JS -->
+          </div>
+        </div>
+
+        <button class="cta" onclick="calcular()">Simular Venda</button>
+      </div>
+    </div>
+
+    <!-- Result card -->
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <h3>Resumo da Simulação</h3>
+        <span class="res-bandeira" id="res-bandeira">—</span>
+      </div>
+      <div class="result-body">
+
+        <!-- Big total -->
+        <div class="total-display">
+          <div class="total-label">Valor total cobrado</div>
+          <div class="total-value" id="res-total">R$ 0,00</div>
+          <div class="total-parc" id="res-total-parc">— parcela(s) de R$ 0,00</div>
+        </div>
+
+        <!-- Line items -->
+        <div class="line">
+          <div class="line-left">
+            <div class="line-dot" style="background:#8899aa"></div>
+            <div>
+              <div class="line-label">Valor bruto da venda</div>
+            </div>
+          </div>
+          <div class="line-val base" id="res-bruto">—</div>
+        </div>
+
+        <div class="line">
+          <div class="line-left">
+            <div class="line-dot" style="background:#ef4444"></div>
+            <div>
+              <div class="line-label">Taxa da bandeira</div>
+              <div class="line-sub" id="res-taxa-pct">—</div>
+            </div>
+          </div>
+          <div class="line-val pos" id="res-taxa">—</div>
+        </div>
+
+        <div class="line">
+          <div class="line-left">
+            <div class="line-dot" style="background:#f0b429"></div>
+            <div>
+              <div class="line-label">Juros do parcelamento</div>
+              <div class="line-sub" id="res-juros-sub">—</div>
+            </div>
+          </div>
+          <div class="line-val pos" id="res-juros">—</div>
+        </div>
+
+        <div class="line">
+          <div class="line-left">
+            <div class="line-dot" style="background:#7c3aed"></div>
+            <div>
+              <div class="line-label">Taxa mensal Infinity Bank</div>
+              <div class="line-sub" id="res-mensal-sub">—</div>
+            </div>
+          </div>
+          <div class="line-val pos" id="res-mensal">—</div>
+        </div>
+
+        <div class="monthly-note" id="res-nota">—</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // State
+    let bandeiraSelecionada = 'visa';
+    let parcelasSelecionadas = 1;
+
+    // Taxas por bandeira
+    const taxasBandeira = { visa: 0.02, master: 0.0185, elo: 0.03 };
+    const nomesBandeira = { visa: 'Visa 2,00%', master: 'Mastercard 1,85%', elo: 'Elo 3,00%' };
+
+    // Juros mensais por parcela (conforme tabela: 1x → 0.9%, 2x → 0.7%, 3x → 0.5%, 4x → 0.2%, depois 0.35%)
+    function jurosMes(parcelas) {
+      switch (parcelas) {
+        case 1: return 0.009;   // 0.9%
+        case 2: return 0.007;   // 0.7%
+        case 3: return 0.005;   // 0.5%
+        case 4: return 0.002;   // 0.2%
+        default: return 0.0035; // 0.35%
+      }
+    }
+
+    // Taxa mensal fixa Infinity Bank
+    const TAXA_MENSAL = 12.50;
+
+    // ── Build parcelas grid ──
+    const grid = document.getElementById('parcelas-grid');
+    for (let i = 1; i <= 12; i++) {
+      const btn = document.createElement('div');
+      btn.className = 'parc-btn' + (i === 1 ? ' active' : '');
+      btn.dataset.parc = i;
+      const jm = (jurosMes(i) * 100).toFixed(2).replace('.', ',');
+      btn.innerHTML = `${i}x <span class="parc-fee">${jm}% a.m.</span>`;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.parc-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        parcelasSelecionadas = i;
+      });
+      grid.appendChild(btn);
+    }
+
+    // ── Select bandeira ──
+    function selectBandeira(el) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      bandeiraSelecionada = el.dataset.band;
+    }
+
+    // ── Format currency ──
+    function fmt(v) {
+      return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    // ── Calcular ──
+    function calcular() {
+      const valor = Number(document.getElementById('valor').value);
+
+      if (!valor || valor <= 0) {
+        document.getElementById('valor').style.borderColor = 'var(--red)';
+        document.getElementById('valor').focus();
+        return;
+      }
+      document.getElementById('valor').style.borderColor = '';
+
+      const parcelas   = parcelasSelecionadas;
+      const taxaBand   = taxasBandeira[bandeiraSelecionada];
+      const jurosMensal = jurosMes(parcelas);
+
+      // Cálculos
+      const valorTaxa   = valor * taxaBand;
+      const jurosTotal  = valor * (jurosMensal * parcelas);
+      const taxaMensal  = TAXA_MENSAL * parcelas;
+      const valorTotal  = valor + valorTaxa + jurosTotal + taxaMensal;
+      const valorParcela = valorTotal / parcelas;
+
+      // Populate result
+      document.getElementById('res-bandeira').textContent  = nomesBandeira[bandeiraSelecionada];
+      document.getElementById('res-total').textContent     = fmt(valorTotal);
+      document.getElementById('res-total-parc').textContent =
+        `${parcelas}x de ${fmt(valorParcela)}`;
+
+      document.getElementById('res-bruto').textContent    = fmt(valor);
+      document.getElementById('res-taxa-pct').textContent = `${(taxaBand * 100).toFixed(2)}% sobre o valor`;
+      document.getElementById('res-taxa').textContent     = `+ ${fmt(valorTaxa)}`;
+      document.getElementById('res-juros-sub').textContent =
+        `${(jurosMensal * 100).toFixed(2)}% a.m. × ${parcelas} parcela(s)`;
+      document.getElementById('res-juros').textContent    = `+ ${fmt(jurosTotal)}`;
+      document.getElementById('res-mensal-sub').textContent =
+        `R$ 12,50 × ${parcelas} mês(es)`;
+      document.getElementById('res-mensal').textContent   = `+ ${fmt(taxaMensal)}`;
+      document.getElementById('res-nota').textContent     =
+        `Valor líquido recebido: ${fmt(valor)} · Custo total: ${fmt(valorTaxa + jurosTotal + taxaMensal)}`;
+
+      // Show
+      const card = document.getElementById('result-card');
+      card.classList.remove('show');
+      void card.offsetWidth;
+      card.classList.add('show');
+
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+</body>
+</html>
