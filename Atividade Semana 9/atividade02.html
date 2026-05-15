@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversor de Temperatura</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #f5f0e8;
+      --surface:  #faf7f2;
+      --border:   #d6cfc4;
+      --text:     #1a1714;
+      --muted:    #9a9187;
+      --cold:     #2563eb;
+      --cold-bg:  #eff6ff;
+      --hot:      #dc2626;
+      --hot-bg:   #fff1f1;
+      --tick:     #c8bdb0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Subtle dot pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--tick) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      width: 100%;
+      max-width: 500px;
+      overflow: hidden;
+      box-shadow: 4px 4px 0 var(--border), 8px 8px 0 rgba(0,0,0,0.06);
+    }
+
+    /* Header band */
+    .header {
+      background: var(--text);
+      color: var(--bg);
+      padding: 1.4rem 2rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left .eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-left h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+
+    .header-right {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      opacity: 0.35;
+      text-align: right;
+    }
+
+    /* Thermometer visual */
+    .thermo-strip {
+      height: 6px;
+      background: linear-gradient(90deg, var(--cold) 0%, #7c3aed 35%, #f59e0b 65%, var(--hot) 100%);
+      position: relative;
+      overflow: visible;
+    }
+
+    .thermo-cursor {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      background: white;
+      border: 2px solid var(--text);
+      border-radius: 50%;
+      transition: left 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    /* Body */
+    .body {
+      padding: 2rem;
+    }
+
+    .converters {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+    }
+
+    .field-label .symbol {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .field-label .name {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .field.celsius .symbol { color: var(--cold); }
+    .field.fahrenheit .symbol { color: var(--hot); }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 500;
+      padding: 0.7rem 2.2rem 0.7rem 0.75rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .field.celsius input:focus {
+      border-color: var(--cold);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .field.fahrenheit input:focus {
+      border-color: var(--hot);
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
+    }
+
+    .unit-badge {
+      position: absolute;
+      right: 0.6rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      pointer-events: none;
+      letter-spacing: 0.04em;
+    }
+
+    /* Arrow */
+    .arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      color: var(--muted);
+      padding-top: 1.6rem;
+    }
+
+    .arrow svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .arrow span {
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* Description row */
+    .formula-row {
+      margin-top: 1.4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .formula-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.03em;
+    }
+
+    .formula-box .f-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .formula-box .f-expr {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Description band */
+    .desc-band {
+      background: var(--bg);
+      border-top: 1.5px solid var(--border);
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .temp-ref {
+      display: flex;
+      gap: 1.2rem;
+    }
+
+    .ref-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+      cursor: pointer;
+      padding: 0.3rem 0.5rem;
+      border-radius: 3px;
+      transition: background 0.15s;
+    }
+
+    .ref-item:hover { background: var(--border); }
+
+    .ref-item .ref-val {
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+
+    .ref-item .ref-label {
+      font-size: 0.52rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .ref-item .ref-val.cold { color: var(--cold); }
+    .ref-item .ref-val.warm { color: #f59e0b; }
+    .ref-item .ref-val.hot  { color: var(--hot); }
+
+    .realtime-badge {
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.75); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <div class="eyebrow">Exercício 02</div>
+        <h1>Conversor de<br>Temperatura</h1>
+      </div>
+      <div class="header-right">
+        Celsius<br>↔<br>Fahrenheit
+      </div>
+    </div>
+
+    <!-- Gradient thermometer strip -->
+    <div class="thermo-strip">
+      <div class="thermo-cursor" id="cursor"></div>
+    </div>
+
+    <!-- Main body -->
+    <div class="body">
+      <div class="converters">
+
+        <!-- Celsius -->
+        <div class="field celsius">
+          <div class="field-label">
+            <span class="symbol">°C</span>
+            <span class="name">Celsius</span>
+          </div>
+          <div class="input-wrap">
+            <input type="number" id="celsius" step="0.1" placeholder="0.00" />
+            <span class="unit-badge">°C</span>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div class="arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M15 8l4 4-4 4"/>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)">
+            <path d="M5 12h14M15 8l4 4-4 4"/>
+          </svg>
+          <span>tempo<br>real</span>
+        </div>
+
+        <!-- Fahrenheit -->
+        <div class="field fahrenheit">
+          <div class="field-label">
+            <span class="symbol">°F</span>
+            <span class="name">Fahrenheit</span>
+          </div>
+          <div class="input-wrap">
+            <input type="number" id="fahrenheit" step="0.1" placeholder="32.00" />
+            <span class="unit-badge">°F</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Formulas -->
+      <div class="formula-row">
+        <div class="formula-box">
+          <div class="f-label">C → F</div>
+          <div class="f-expr">F = (C × 9/5) + 32</div>
+        </div>
+        <div class="formula-box">
+          <div class="f-label">F → C</div>
+          <div class="f-expr">C = (F − 32) × 5/9</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- References strip -->
+    <div class="desc-band">
+      <div class="temp-ref">
+        <div class="ref-item" onclick="setC(-40)" title="Clique para usar">
+          <span class="ref-val cold">−40°C</span>
+          <span class="ref-label">Ártico</span>
+        </div>
+        <div class="ref-item" onclick="setC(0)">
+          <span class="ref-val cold">0°C</span>
+          <span class="ref-label">Gelo</span>
+        </div>
+        <div class="ref-item" onclick="setC(37)">
+          <span class="ref-val warm">37°C</span>
+          <span class="ref-label">Corpo</span>
+        </div>
+        <div class="ref-item" onclick="setC(100)">
+          <span class="ref-val hot">100°C</span>
+          <span class="ref-label">Ebulição</span>
+        </div>
+      </div>
+      <div class="realtime-badge">
+        <span class="dot"></span>
+        ao vivo
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const celsiusInput     = document.getElementById('celsius');
+    const fahrenheitInput  = document.getElementById('fahrenheit');
+    const cursor           = document.getElementById('cursor');
+
+    // Map a Celsius value to a 0–100% position on the gradient strip
+    // Range: -40°C (left) to 120°C (right)
+    function celsiusToPercent(c) {
+      const min = -40, max = 120;
+      const pct = ((c - min) / (max - min)) * 100;
+      return Math.min(100, Math.max(0, pct));
+    }
+
+    function updateCursor(c) {
+      cursor.style.left = celsiusToPercent(c) + '%';
+    }
+
+    // C → F
+    celsiusInput.addEventListener('input', () => {
+      const c = parseFloat(celsiusInput.value);
+      if (isNaN(c)) {
+        fahrenheitInput.value = '';
+        cursor.style.left = '0%';
+        return;
+      }
+      const f = (c * 9 / 5) + 32;
+      fahrenheitInput.value = f.toFixed(2);
+      updateCursor(c);
+    });
+
+    // F → C
+    fahrenheitInput.addEventListener('input', () => {
+      const f = parseFloat(fahrenheitInput.value);
+      if (isNaN(f)) {
+        celsiusInput.value = '';
+        cursor.style.left = '0%';
+        return;
+      }
+      const c = (f - 32) * 5 / 9;
+      celsiusInput.value = c.toFixed(2);
+      updateCursor(c);
+    });
+
+    // Reference quick-set
+    function setC(val) {
+      celsiusInput.value = val.toFixed(2);
+      const f = (val * 9 / 5) + 32;
+      fahrenheitInput.value = f.toFixed(2);
+      updateCursor(val);
+      celsiusInput.focus();
+    }
+
+    // Initialize at 0°C / 32°F
+    setC(0);
+  </script>
+</body>
+</html>
